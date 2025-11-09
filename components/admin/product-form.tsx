@@ -215,11 +215,11 @@ export function ProductForm({ product }: ProductFormProps) {
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 md:space-y-6 max-w-4xl">
         <div className="space-y-2">
           <Label>Imagem do Produto</Label>
           {imagePreview ? (
-            <div className="relative w-full max-w-sm">
+            <div className="relative w-full max-w-xs md:max-w-sm">
               <img
                 src={imagePreview || "/placeholder.svg"}
                 alt="Preview"
@@ -229,23 +229,23 @@ export function ProductForm({ product }: ProductFormProps) {
                 <button
                   type="button"
                   onClick={handleEditImage}
-                  className="p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
+                  className="p-1.5 md:p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
                   title="Editar imagem"
                 >
-                  <Pencil className="size-4 text-gray-700" />
+                  <Pencil className="size-3 md:size-4 text-gray-700" />
                 </button>
                 <button
                   type="button"
                   onClick={handleRemoveImage}
-                  className="p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
+                  className="p-1.5 md:p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
                   title="Remover imagem"
                 >
-                  <X className="size-4 text-red-600" />
+                  <X className="size-3 md:size-4 text-red-600" />
                 </button>
               </div>
             </div>
           ) : (
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 md:p-8 text-center hover:border-gray-400 transition-colors">
               <input
                 type="file"
                 accept="image/*"
@@ -257,13 +257,13 @@ export function ProductForm({ product }: ProductFormProps) {
               <label htmlFor="image-upload" className="cursor-pointer flex flex-col items-center gap-2">
                 {isUploading ? (
                   <>
-                    <Loader2 className="size-8 text-gray-400 animate-spin" />
-                    <p className="text-sm text-gray-600">Enviando imagem...</p>
+                    <Loader2 className="size-6 md:size-8 text-gray-400 animate-spin" />
+                    <p className="text-xs md:text-sm text-gray-600">Enviando imagem...</p>
                   </>
                 ) : (
                   <>
-                    <Upload className="size-8 text-gray-400" />
-                    <p className="text-sm text-gray-600">
+                    <Upload className="size-6 md:size-8 text-gray-400" />
+                    <p className="text-xs md:text-sm text-gray-600">
                       Clique para fazer upload ou arraste uma imagem
                       <br />
                       <span className="text-xs text-gray-500">PNG, JPG ou WEBP (máx. 5MB)</span>
@@ -287,7 +287,7 @@ export function ProductForm({ product }: ProductFormProps) {
             <select
               id="category"
               {...register("category")}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff8800]"
+              className="flex-1 px-3 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff8800]"
             >
               <option value="">Selecione uma categoria</option>
               {categories.map((cat) => (
@@ -302,6 +302,7 @@ export function ProductForm({ product }: ProductFormProps) {
               size="icon"
               onClick={() => setCategoryDialogOpen(true)}
               title="Adicionar nova categoria"
+              className="shrink-0"
             >
               <Plus className="size-4" />
             </Button>
@@ -316,13 +317,13 @@ export function ProductForm({ product }: ProductFormProps) {
             placeholder="Descrição detalhada do produto..."
             rows={4}
             {...register("description")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff8800]"
+            className="w-full px-3 py-2 text-sm md:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff8800]"
             aria-invalid={!!errors.description}
           />
           {errors.description && <p className="text-sm text-red-600">{errors.description.message}</p>}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="weight">Peso/Tamanho</Label>
             <Input id="weight" placeholder="Ex: 500g, 1kg" {...register("weight")} />
@@ -341,18 +342,18 @@ export function ProductForm({ product }: ProductFormProps) {
           </div>
         </div>
 
-        <div className="flex gap-4 pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            className="w-full sm:flex-1 px-4 py-2.5 text-sm md:text-base border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 px-4 py-2 bg-[#ff8800] text-white rounded-lg hover:bg-[#e67700] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full sm:flex-1 px-4 py-2.5 text-sm md:text-base bg-[#ff8800] text-white rounded-lg hover:bg-[#e67700] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               <>
