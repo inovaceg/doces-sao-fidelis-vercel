@@ -1,16 +1,17 @@
-"use client" // Adicionado para usar hooks de React
+"use client"
 
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { Button } from "@/components/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { createClient } from "@/lib/supabase/client" // Alterado para client-side Supabase
-import { Package, ShoppingCart } from "lucide-react" // Adicionado ShoppingCart
+import { createClient } from "@/lib/supabase/client"
+import { Package, ShoppingCart, Minus, Plus } from "lucide-react" // Adicionado Minus e Plus
 import Link from "next/link"
 import Image from "next/image"
-import { useState, useEffect } from "react" // Adicionado useState e useEffect
-import { useCart } from "@/components/cart-provider" // Importar useCart
+import { useState, useEffect } from "react"
+import { useCart } from "@/components/cart-provider"
+import { Input } from "@/components/ui/input" // Importar Input
 
 interface Product {
   id: string
@@ -19,17 +20,18 @@ interface Product {
   description: string
   ingredients?: string
   weight?: string
-  price?: number // Mantido como opcional, mas não será exibido
+  price?: number
   image_url?: string
   is_featured?: boolean
   created_at: string
 }
 
-export default function ProductsPage() { // Alterado para componente de cliente
+export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>({}) // Estado para gerenciar quantidades
   const supabase = createClient()
-  const { addItem } = useCart() // Usar o hook do carrinho
+  const { addItem } = useCart()
 
   useEffect(() => {
     fetchProducts()
@@ -45,7 +47,21 @@ export default function ProductsPage() { // Alterado para componente de cliente
       console.error("Error fetching products:", error)
     }
     setProducts(data || [])
+    // Inicializa as quantidades para 1 para cada produto
+    const initialQuantities: { [key: string]: number } = {}
+    data?.forEach(product => {
+      initialQuantities[product.id] = 1
+    })
+    setQuantities(initialQuantities)
     setLoading(false)
+  }
+
+  const handleQuantityChange = (productId: string, newQuantity: number) => {
+    if (newQuantity < 1) newQuantity = 1 // Garante que a quantidade mínima é 1
+    setQuantities(prev => ({
+      ...prev,
+      [productId]: newQuantity,
+    }))
   }
 
   if (loading) {
@@ -124,6 +140,31 @@ export default function ProductsPage() { // Alterado para componente de cliente
                             <p className="text-sm text-muted-foreground">{product.weight}</p>
                           </div>
                         )}
+                        {/* Seletor de Quantidade */}
+                        <div className="flex items-center gap-2 mt-4">
+                          <Button
+                            variant="outline"
+                            size="icon-sm"
+                            onClick={() => handleQuantityChange(product.id, quantities[product.id] - 1)}
+                            disabled={quantities[product.id] <= 1}
+                          >
+                            <Minus className="size-4" />
+                          </Button>
+                          <Input
+                            type="number"
+                            value={quantities[product.id]}
+                            onChange={(e) => handleQuantityChange(product.id, parseInt(e.target.value))}
+                            className="w-16 text-center"
+                            min="1"
+                          />
+                          <Button
+                            variant="outline"
+                            size="icon-sm"
+                            onClick={() => handleQuantityChange(product.id, quantities[product.id] + 1)}
+                          >
+                            <Plus className="size-4" />
+                          </Button>
+                        </div>
                         <Button
                           className="w-full mt-4"
                           onClick={() => addItem({
@@ -131,7 +172,7 @@ export default function ProductsPage() { // Alterado para componente de cliente
                             name: product.name,
                             image_url: product.image_url,
                             weight: product.weight,
-                          })}
+                          }, quantities[product.id])} // Passa a quantidade selecionada
                         >
                           <ShoppingCart className="size-4 mr-2" /> Adicionar ao Carrinho
                         </Button>
