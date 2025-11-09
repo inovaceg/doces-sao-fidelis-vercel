@@ -11,7 +11,7 @@ interface NewsletterSubscriber {
   name: string // Agora é obrigatório
   whatsapp: string // Agora é obrigatório
   city: string // Novo campo
-  created_at: string
+  subscribed_at: string // Corrigido para subscribed_at
 }
 
 export default function AdminNewsletterPage() {
@@ -25,11 +25,11 @@ export default function AdminNewsletterPage() {
   }, [])
 
   const fetchSubscribers = async () => {
-    // Alterado para selecionar explicitamente as colunas
+    // Alterado para selecionar explicitamente as colunas e usar subscribed_at
     const { data, error } = await supabase
       .from("newsletter_subscribers")
-      .select("id, name, email, whatsapp, city, created_at") // Seleção explícita das colunas
-      .order("created_at", { ascending: false })
+      .select("id, name, email, whatsapp, city, subscribed_at") // Corrigido para subscribed_at
+      .order("subscribed_at", { ascending: false }) // Corrigido para subscribed_at
     
     if (error) {
       console.error("Error fetching newsletter subscribers:", error);
@@ -104,7 +104,7 @@ export default function AdminNewsletterPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{subscriber.whatsapp}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{subscriber.city}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(subscriber.created_at).toLocaleString("pt-BR")}
+                    {new Date(subscriber.subscribed_at).toLocaleString("pt-BR")}
                   </td>
                 </tr>
               ))}
