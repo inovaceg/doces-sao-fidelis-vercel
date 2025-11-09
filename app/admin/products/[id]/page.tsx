@@ -6,11 +6,13 @@ import { createClient } from "@/lib/supabase/client"
 import { ProductForm } from "@/components/admin/product-form"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
+import type { ProductFormData } from "@/components/admin/product-form" // Importar o tipo ProductFormData
 
 export default function EditProductPage() {
   const params = useParams()
   const router = useRouter()
-  const [product, setProduct] = useState(null)
+  // Inicializa o estado 'product' como undefined para corresponder ao tipo esperado pelo ProductForm
+  const [product, setProduct] = useState<(ProductFormData & { id: string }) | undefined>(undefined)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
@@ -26,7 +28,8 @@ export default function EditProductPage() {
       return
     }
 
-    setProduct(data)
+    // Garante que o tipo de 'data' corresponde ao tipo do estado
+    setProduct(data as ProductFormData & { id: string })
     setLoading(false)
   }
 
@@ -34,6 +37,15 @@ export default function EditProductPage() {
     return (
       <main className="p-8">
         <div className="text-center py-12">Carregando...</div>
+      </main>
+    )
+  }
+
+  // Adiciona uma verificação para garantir que 'product' não é undefined antes de renderizar ProductForm
+  if (!product) {
+    return (
+      <main className="p-8">
+        <div className="text-center py-12">Produto não encontrado ou erro de carregamento.</div>
       </main>
     )
   }

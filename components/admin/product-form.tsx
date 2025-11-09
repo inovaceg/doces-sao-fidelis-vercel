@@ -33,7 +33,7 @@ const productSchema = z.object({
   image_url: z.string().optional().or(z.literal("")),
 })
 
-type ProductFormData = z.infer<typeof productSchema>
+export type ProductFormData = z.infer<typeof productSchema>
 
 type ProductFormProps = {
   product?: ProductFormData & { id: string }
@@ -269,7 +269,8 @@ export function ProductForm({ product }: ProductFormProps) {
                       <span className="text-xs text-gray-500">PNG, JPG ou WEBP (máx. 5MB)</span>
                     </p>
                   </>
-                )}
+                )
+                }
               </label>
             </div>
           )}
