@@ -11,10 +11,10 @@ interface QuoteRequest {
   contact_name: string
   email: string
   phone: string
-  address?: string // Adicionado, pois existe no DB
-  city?: string    // Adicionado, pois existe no DB
-  state?: string   // Adicionado, pois existe no DB
-  product_interest?: string // Corrigido para singular, como no DB
+  address?: string
+  city?: string
+  state?: string
+  product_interest?: string
   quantity?: string
   message?: string
   created_at: string
@@ -31,14 +31,17 @@ export default function AdminQuotesPage() {
   }, [])
 
   const fetchQuotes = async () => {
+    setLoading(true); // Garante que o estado de carregamento é ativado
     const { data, error } = await supabase.from("quote_requests").select("*").order("created_at", { ascending: false })
     
     if (error) {
-      console.error("Error fetching quote requests:", error);
+      console.error("Erro ao buscar solicitações de orçamento do Supabase:", error);
       toast.error("Erro ao carregar solicitações de orçamento.");
+      setQuotes([]); // Garante que a lista fica vazia em caso de erro
+    } else {
+      console.log("Dados de orçamentos recebidos do Supabase:", data); // Log para depuração
+      setQuotes(data || []);
     }
-    
-    setQuotes(data || [])
     setLoading(false)
   }
 
@@ -60,13 +63,13 @@ export default function AdminQuotesPage() {
       quote.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       quote.contact_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       quote.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (quote.product_interest && quote.product_interest.toLowerCase().includes(searchTerm.toLowerCase())), // Usar product_interest
+      (quote.product_interest && quote.product_interest.toLowerCase().includes(searchTerm.toLowerCase())),
   )
 
   if (loading) {
     return (
       <main className="p-8">
-        <div className="text-center py-12">Carregando...</div>
+        <div className="text-center py-12">Carregando solicitações de orçamento...</div>
       </main>
     )
   }
@@ -125,7 +128,7 @@ export default function AdminQuotesPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{quote.contact_name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{quote.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{quote.phone}</td>
-                  <td className="px-6 py-4 text-sm text-[#4a4a4a]">{quote.product_interest || "-"}</td> {/* Usar product_interest */}
+                  <td className="px-6 py-4 text-sm text-[#4a4a4a]">{quote.product_interest || "-"}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {new Date(quote.created_at).toLocaleString("pt-BR")}
                   </td>
