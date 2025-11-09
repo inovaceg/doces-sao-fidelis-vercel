@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { useCart } from "@/components/cart-provider"
 import Link from "next/link"
 import Image from "next/image"
-import { Trash2, Minus, Plus } from "lucide-react"
+import { Trash2, Minus, Plus, ShoppingCart, Package } from "lucide-react" // Adicionado ShoppingCart e Package
 import { useRouter } from "next/navigation"
 
 export default function CartPage() {
@@ -16,10 +16,8 @@ export default function CartPage() {
   const router = useRouter()
 
   const handleCheckout = () => {
-    // Aqui você pode adicionar lógica para preparar os dados do carrinho
-    // e talvez passá-los para a página de contato ou uma nova página de checkout.
-    // Por enquanto, vamos apenas redirecionar para a página de contato.
-    router.push("/contato")
+    // Redireciona para a página de checkout
+    router.push("/checkout")
   }
 
   return (
