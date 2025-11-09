@@ -71,9 +71,7 @@ export function SiteHeader() {
               >
                 Contato
               </Link>
-              <Button asChild size="sm" className="rounded-full">
-                <Link href="/solicitar-orcamento">Solicitar Orçamento</Link>
-              </Button>
+              {/* Removido o botão "Solicitar Orçamento" */}
               <Button asChild size="sm" variant="outline" className="rounded-full bg-transparent">
                 <Link href="/admin/login">Login</Link>
               </Button>
@@ -125,9 +123,7 @@ export function SiteHeader() {
               >
                 Contato
               </Link>
-              <Button asChild size="sm" className="w-full rounded-full" onClick={() => setMobileMenuOpen(false)}>
-                <Link href="/solicitar-orcamento">Solicitar Orçamento</Link>
-              </Button>
+              {/* Removido o botão "Solicitar Orçamento" */}
               <Button
                 asChild
                 size="sm"

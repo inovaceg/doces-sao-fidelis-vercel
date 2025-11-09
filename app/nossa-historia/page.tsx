@@ -195,6 +195,7 @@ export default function OurHistoryPage() {
                 <Button asChild size="lg">
                   <Link href="/produtos">Ver Produtos</Link>
                 </Button>
+                {/* O botão "Fale Conosco" já existe e não é um "Solicitar Orçamento", então o mantemos. */}
                 <Button asChild variant="outline" size="lg">
                   <Link href="/contato">Fale Conosco</Link>
                 </Button>

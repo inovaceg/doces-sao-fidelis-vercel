@@ -200,9 +200,7 @@ export default function QualityPage() {
                 <Button asChild size="lg">
                   <Link href="/produtos">Ver Produtos</Link>
                 </Button>
-                <Button asChild variant="outline" size="lg">
-                  <Link href="/solicitar-orcamento">Solicitar Orçamento</Link>
-                </Button>
+                {/* Removido o botão "Solicitar Orçamento" */}
               </div>
             </div>
           </div>

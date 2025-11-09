@@ -350,17 +350,7 @@ export default async function HomePage() {
                   grandes quantidades.
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center">
-                  <Button
-                    asChild
-                    size="lg"
-                    variant="outline"
-                    className="bg-background text-foreground hover:bg-background/90"
-                  >
-                    <Link href="/solicitar-orcamento">
-                      Solicitar Orçamento
-                      <ArrowRight />
-                    </Link>
-                  </Button>
+                  {/* Removido o botão "Solicitar Orçamento" */}
                   <Button
                     asChild
                     size="lg"

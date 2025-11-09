@@ -85,9 +85,8 @@ export default async function ProductsPage() {
                             <p className="text-sm text-muted-foreground">{product.weight}</p>
                           </div>
                         )}
-                        <Button asChild className="w-full mt-4">
-                          <Link href="/solicitar-orcamento">Solicitar Orçamento</Link>
-                        </Button>
+                        {/* Removido o botão "Solicitar Orçamento" e o preço */}
+                        {/* Aqui será adicionado o botão 'Adicionar ao Carrinho' na próxima fase */}
                       </div>
                     </CardContent>
                   </Card>
@@ -124,9 +123,7 @@ export default async function ProductsPage() {
                 personalizado.
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
-                <Button asChild size="lg">
-                  <Link href="/solicitar-orcamento">Solicitar Orçamento</Link>
-                </Button>
+                {/* Removido o botão "Solicitar Orçamento" */}
                 <Button asChild variant="outline" size="lg">
                   <Link href="/contato">Fale Conosco</Link>
                 </Button>
