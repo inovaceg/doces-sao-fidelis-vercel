@@ -42,7 +42,15 @@ export function LoginForm() {
       })
 
       if (error) {
-        toast.error("Credenciais inválidas")
+        let errorMessage = "Erro ao fazer login. Verifique suas credenciais."
+        if (error.message.includes("Email not confirmed")) {
+          errorMessage = "Seu e-mail ainda não foi confirmado. Por favor, verifique sua caixa de entrada."
+        } else if (error.message.includes("Invalid login credentials")) {
+          errorMessage = "Credenciais inválidas. Verifique seu e-mail e senha."
+        } else {
+          errorMessage = `Erro: ${error.message}`
+        }
+        toast.error(errorMessage)
         return
       }
 
@@ -50,7 +58,8 @@ export function LoginForm() {
       router.push("/admin")
       router.refresh()
     } catch (error) {
-      toast.error("Erro ao fazer login")
+      console.error("Unexpected error during login:", error);
+      toast.error("Ocorreu um erro inesperado. Tente novamente mais tarde.")
     } finally {
       setIsSubmitting(false)
     }
