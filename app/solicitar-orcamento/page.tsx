@@ -1,5 +1,6 @@
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
+import { Button } from "@/components/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { QuoteRequestForm } from "@/components/quote-request-form"
 import { Package, Truck, CreditCard, Clock } from "lucide-react"
@@ -11,13 +12,13 @@ export default function QuoteRequestPage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-secondary py-16 lg:py-24">
+        <section className="bg-primary py-16 lg:py-24 text-primary-foreground"> {/* Alterado para bg-primary e texto para primary-foreground */}
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl">
-              <h1 className="font-serif text-4xl lg:text-6xl font-bold text-foreground mb-6 text-balance">
+              <h1 className="font-serif text-4xl lg:text-6xl font-bold mb-6 text-balance">
                 Solicitar Orçamento
               </h1>
-              <p className="text-lg text-muted-foreground text-pretty">
+              <p className="text-lg text-pretty">
                 Preencha o formulário com os detalhes do seu pedido e retornaremos com um orçamento personalizado.
               </p>
             </div>
