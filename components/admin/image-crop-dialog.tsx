@@ -127,17 +127,17 @@ export function ImageCropDialog({ open, onOpenChange, imageUrl, onCropComplete, 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-full sm:max-w-lg md:max-w-xl lg:max-w-4xl"> {/* Make dialog responsive */}
+      <DialogContent className="max-w-full sm:max-w-lg md:max-w-xl lg:max-w-4xl flex flex-col h-[90vh]"> {/* Make dialog responsive, flex-col, and set height */}
         <DialogHeader>
           <DialogTitle>Ajustar Imagem</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="flex justify-center bg-gray-100 rounded-lg p-4">
+        <div className="flex-1 flex flex-col gap-4 py-4 overflow-y-auto"> {/* Main content area, takes remaining space, allows scrolling */}
+          <div className="flex justify-center bg-gray-100 rounded-lg p-2 sm:p-4 flex-1 min-h-0"> {/* Canvas container, flex-1 to take space */}
+            {/* Canvas fills its parent, object-contain for image */}
             <canvas
               ref={canvasRef}
-              className="w-full h-auto cursor-move border border-gray-300 rounded" // Use w-full and remove fixed maxWidth
-              // Removed inline style maxWidth: "800px", height: "auto"
+              className="w-full h-full cursor-move border border-gray-300 rounded object-contain"
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
@@ -145,7 +145,7 @@ export function ImageCropDialog({ open, onOpenChange, imageUrl, onCropComplete, 
             />
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3"> {/* Controls section, reduced vertical spacing */}
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <ZoomOut className="size-4 text-gray-600" />
@@ -163,7 +163,7 @@ export function ImageCropDialog({ open, onOpenChange, imageUrl, onCropComplete, 
               <ZoomIn className="size-4 text-gray-600" />
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap"> {/* Added flex-wrap for better mobile layout */}
               <Button
                 type="button"
                 variant="outline"
@@ -174,7 +174,7 @@ export function ImageCropDialog({ open, onOpenChange, imageUrl, onCropComplete, 
                 <RotateCw className="size-4" />
                 Rotacionar 90°
               </Button>
-              <span className="text-sm text-gray-600">Arraste a imagem para reposicionar</span>
+              <span className="text-sm text-gray-600 flex-1 text-right sm:text-left">Arraste a imagem para reposicionar</span>
             </div>
           </div>
         </div>
