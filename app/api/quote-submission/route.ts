@@ -29,12 +29,13 @@ export async function POST(request: Request) {
 
     if (quoteError) {
       console.error("Error saving quote request:", quoteError)
-      return NextResponse.json({ error: "Erro ao salvar solicitação de orçamento" }, { status: 500 })
+      // Retorna a mensagem de erro específica do Supabase para o cliente
+      return NextResponse.json({ error: quoteError.message }, { status: 500 })
     }
 
     return NextResponse.json({ success: true, quoteRequestId: quoteRequest.id })
-  } catch (error) {
+  } catch (error: any) { // Explicitly type error as any for easier access to message
     console.error("Error in quote submission API:", error)
-    return NextResponse.json({ error: "Erro ao processar solicitação" }, { status: 500 })
+    return NextResponse.json({ error: error.message || "Erro ao processar solicitação" }, { status: 500 })
   }
 }
