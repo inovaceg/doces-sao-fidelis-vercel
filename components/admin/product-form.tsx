@@ -84,6 +84,17 @@ export function ProductForm({ product }: ProductFormProps) {
     fetchCategories()
   }, [])
 
+  // Efeito para definir o valor da categoria no formulário quando as categorias e o produto estiverem carregados
+  useEffect(() => {
+    if (product && categories.length > 0) {
+      const categoryId = categories.find(cat => cat.name === product.category)?.id;
+      if (categoryId) {
+        setValue("category", categoryId);
+      }
+    }
+  }, [product, categories, setValue]);
+
+
   const fetchCategories = async () => {
     try {
       const response = await fetch("/api/categories")
