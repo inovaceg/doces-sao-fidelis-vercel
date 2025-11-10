@@ -16,19 +16,40 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 
 const bannerSchema = z.object({
-  image_url: z.string().optional().or(z.literal("")),
+  desktop_image_url: z.string().optional().or(z.literal("")),
+  tablet_image_url: z.string().optional().or(z.literal("")),
+  mobile_image_url: z.string().optional().or(z.literal("")),
 });
 
 type BannerFormData = z.infer<typeof bannerSchema>;
+
+type DeviceType = 'desktop' | 'tablet' | 'mobile';
+
+const ASPECT_RATIOS: Record<DeviceType, number> = {
+  desktop: 16 / 9,
+  tablet: 4 / 3,
+  mobile: 9 / 16,
+};
+
+const DEVICE_LABELS: Record<DeviceType, string> = {
+  desktop: "Desktop (16:9)",
+  tablet: "Tablet (4:3)",
+  mobile: "Celular (9:16)",
+};
+
+const DEVICE_KEYS: Record<DeviceType, keyof BannerFormData> = {
+  desktop: "desktop_image_url",
+  tablet: "tablet_image_url",
+  mobile: "mobile_image_url",
+};
 
 export function BannerForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string>("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [tempImageUrl, setTempImageUrl] = useState<string>("");
+  const [activeDevice, setActiveDevice] = useState<DeviceType>('desktop'); // Estado para controlar o dispositivo ativo
   const supabase = createClient();
 
   const {
@@ -40,29 +61,37 @@ export function BannerForm() {
   } = useForm<BannerFormData>({
     resolver: zodResolver(bannerSchema),
     defaultValues: {
-      image_url: "",
+      desktop_image_url: "",
+      tablet_image_url: "",
+      mobile_image_url: "",
     },
   });
 
-  const watchedImageUrl = watch("image_url");
+  const watchedDesktopImageUrl = watch("desktop_image_url");
+  const watchedTabletImageUrl = watch("tablet_image_url");
+  const watchedMobileImageUrl = watch("mobile_image_url");
+
+  const currentImageUrl = watch(DEVICE_KEYS[activeDevice]);
 
   useEffect(() => {
-    fetchBannerUrl();
+    fetchBannerUrls();
   }, []);
 
-  const fetchBannerUrl = async () => {
+  const fetchBannerUrls = async () => {
     const { data, error } = await supabase
       .from("settings")
-      .select("value")
-      .eq("key", "homepage_banner_url")
-      .single();
+      .select("key, value")
+      .in("key", ["homepage_banner_url_desktop", "homepage_banner_url_tablet", "homepage_banner_url_mobile"]);
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
-      console.error("Error fetching banner URL:", error);
-      toast.error("Erro ao carregar a URL do banner.");
+    if (error && error.code !== 'PGRST116') {
+      console.error("Error fetching banner URLs:", error);
+      toast.error("Erro ao carregar as URLs dos banners.");
     } else if (data) {
-      setImagePreview(data.value || "");
-      setValue("image_url", data.value || "");
+      data.forEach(setting => {
+        if (setting.key === "homepage_banner_url_desktop") setValue("desktop_image_url", setting.value || "");
+        if (setting.key === "homepage_banner_url_tablet") setValue("tablet_image_url", setting.value || "");
+        if (setting.key === "homepage_banner_url_mobile") setValue("mobile_image_url", setting.value || "");
+      });
     }
   };
 
@@ -80,7 +109,6 @@ export function BannerForm() {
       return;
     }
 
-    setSelectedFile(file);
     const url = URL.createObjectURL(file);
     setTempImageUrl(url);
     setCropDialogOpen(true);
@@ -89,7 +117,7 @@ export function BannerForm() {
   const handleCropComplete = async (croppedBlob: Blob) => {
     setIsUploading(true);
     try {
-      const file = new File([croppedBlob], selectedFile?.name || "banner.jpg", { type: "image/jpeg" });
+      const file = new File([croppedBlob], `banner_${activeDevice}.jpg`, { type: "image/jpeg" });
       const formData = new FormData();
       formData.append("file", file);
 
@@ -101,8 +129,7 @@ export function BannerForm() {
       if (!response.ok) throw new Error("Upload failed");
 
       const { url } = await response.json();
-      setImagePreview(url);
-      setValue("image_url", url);
+      setValue(DEVICE_KEYS[activeDevice], url);
       toast.success("Imagem carregada com sucesso!");
     } catch (error) {
       console.error("[v0] Upload error:", error);
@@ -114,33 +141,37 @@ export function BannerForm() {
   };
 
   const handleEditImage = () => {
-    if (imagePreview) {
-      setTempImageUrl(imagePreview);
+    if (currentImageUrl) {
+      setTempImageUrl(currentImageUrl);
       setCropDialogOpen(true);
     }
   };
 
   const handleRemoveImage = () => {
-    setImagePreview("");
-    setValue("image_url", "");
-    setSelectedFile(null);
+    setValue(DEVICE_KEYS[activeDevice], "");
   };
 
   const onSubmit = async (data: BannerFormData) => {
     setIsSubmitting(true);
 
     try {
+      const updates = [
+        { key: "homepage_banner_url_desktop", value: data.desktop_image_url || "" },
+        { key: "homepage_banner_url_tablet", value: data.tablet_image_url || "" },
+        { key: "homepage_banner_url_mobile", value: data.mobile_image_url || "" },
+      ];
+
       const { error } = await supabase
         .from("settings")
-        .upsert({ key: "homepage_banner_url", value: data.image_url || "" }, { onConflict: "key" });
+        .upsert(updates, { onConflict: "key" });
 
       if (error) throw error;
 
-      toast.success("Banner atualizado com sucesso!");
-      router.refresh(); // Refresh the page to show the updated banner
+      toast.success("Banners atualizados com sucesso!");
+      router.refresh();
     } catch (error) {
-      console.error("Error updating banner:", error);
-      toast.error("Erro ao atualizar o banner.");
+      console.error("Error updating banners:", error);
+      toast.error("Erro ao atualizar os banners.");
     } finally {
       setIsSubmitting(false);
     }
@@ -149,13 +180,27 @@ export function BannerForm() {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 md:space-y-6 max-w-4xl">
+        <div className="flex space-x-2 mb-6">
+          {Object.keys(DEVICE_LABELS).map((device) => (
+            <Button
+              key={device}
+              type="button"
+              variant={activeDevice === device ? "default" : "outline"}
+              onClick={() => setActiveDevice(device as DeviceType)}
+              className="flex-1"
+            >
+              {DEVICE_LABELS[device as DeviceType]}
+            </Button>
+          ))}
+        </div>
+
         <div className="space-y-2">
-          <Label>Imagem do Banner</Label>
-          {imagePreview ? (
-            <div className="relative w-full max-w-xl aspect-video">
+          <Label>Imagem do Banner ({DEVICE_LABELS[activeDevice]})</Label>
+          {currentImageUrl ? (
+            <div className="relative w-full max-w-xl" style={{ aspectRatio: ASPECT_RATIOS[activeDevice] }}>
               <Image
-                src={imagePreview}
-                alt="Preview do Banner"
+                src={currentImageUrl}
+                alt={`Preview do Banner ${activeDevice}`}
                 fill
                 className="object-cover w-full h-full rounded-lg border border-gray-300"
               />
@@ -179,16 +224,16 @@ export function BannerForm() {
               </div>
             </div>
           ) : (
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 md:p-8 text-center hover:border-gray-400 transition-colors">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 md:p-8 text-center hover:border-gray-400 transition-colors" style={{ aspectRatio: ASPECT_RATIOS[activeDevice] }}>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleFileSelect}
                 className="hidden"
-                id="banner-upload"
+                id={`banner-upload-${activeDevice}`}
                 disabled={isUploading}
               />
-              <label htmlFor="banner-upload" className="cursor-pointer flex flex-col items-center gap-2">
+              <label htmlFor={`banner-upload-${activeDevice}`} className="cursor-pointer flex flex-col items-center gap-2 h-full justify-center">
                 {isUploading ? (
                   <>
                     <Loader2 className="size-6 md:size-8 text-gray-400 animate-spin" />
@@ -203,7 +248,7 @@ export function BannerForm() {
                       <span className="text-xs text-gray-500">PNG, JPG ou WEBP (máx. 5MB)</span>
                       <br />
                       <span className="text-xs text-gray-500 font-semibold">
-                        Recomendado: Proporção 16:9 (ex: 1920 pixels de largura por 1080 pixels de altura)
+                        Recomendado: {DEVICE_LABELS[activeDevice]}
                       </span>
                     </p>
                   </>
@@ -211,7 +256,7 @@ export function BannerForm() {
               </label>
             </div>
           )}
-          {errors.image_url && <p className="text-sm text-red-600">{errors.image_url.message}</p>}
+          {errors[DEVICE_KEYS[activeDevice]] && <p className="text-sm text-red-600">{errors[DEVICE_KEYS[activeDevice]]?.message}</p>}
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
@@ -226,7 +271,7 @@ export function BannerForm() {
                 Salvando...
               </>
             ) : (
-              "Salvar Banner"
+              "Salvar Banners"
             )}
           </Button>
         </div>
@@ -238,7 +283,7 @@ export function BannerForm() {
           onOpenChange={setCropDialogOpen}
           imageUrl={tempImageUrl}
           onCropComplete={handleCropComplete}
-          aspectRatio={16 / 9} // Passando a proporção 16:9 aqui
+          aspectRatio={ASPECT_RATIOS[activeDevice]} // Passando a proporção correta
         />
       )}
     </>
