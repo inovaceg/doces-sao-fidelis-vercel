@@ -44,8 +44,8 @@ export default async function HomePage() {
       <section className="relative min-h-[600px] flex items-center">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/artisanal-banana-candy-bananadas-on-wooden-table.jpg"
-            alt="Bananadas artesanais"
+            src="/banner.png"
+            alt="Doces São Fidélis"
             fill
             className="object-cover w-full h-full"
             priority
