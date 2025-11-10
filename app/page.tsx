@@ -57,7 +57,7 @@ export default async function HomePage() {
       <section className="relative min-h-[600px] flex items-center">
         <div className="absolute inset-0 z-0">
           <Image
-            src={bannerImageUrl} {/* Usando a URL dinâmica do banner */}
+            src={bannerImageUrl}
             alt="Doces São Fidélis"
             fill
             className="object-cover w-full h-full"
