@@ -26,6 +26,8 @@ interface Product {
   image_url?: string
   is_featured?: boolean
   units_per_package?: number
+  is_active?: boolean // Novo campo
+  display_order?: number // Novo campo
   created_at: string
 }
 
@@ -61,6 +63,13 @@ export default function ProductDetailPage() {
       return
     }
 
+    // Redirecionar se o produto não estiver ativo
+    if (!data.is_active) {
+      toast.error("Este produto não está disponível no momento.")
+      router.push("/produtos")
+      return
+    }
+
     setProduct(data)
     setQuantity(1) // Reset quantity when product changes
     fetchRelatedProducts(data.category, data.id)
@@ -72,8 +81,10 @@ export default function ProductDetailPage() {
       .from("products")
       .select("*")
       .eq("category", category)
+      .eq("is_active", true) // Filtrar apenas produtos ativos
       .neq("id", currentProductId) // Exclude the current product
       .limit(5)
+      .order("display_order", { ascending: true }) // Ordenar por display_order
       .order("created_at", { ascending: false })
 
     if (error) {

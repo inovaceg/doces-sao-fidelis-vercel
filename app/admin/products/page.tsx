@@ -6,6 +6,7 @@ import { Plus, Pencil, Trash2 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { toast } from "sonner"
+import { Badge } from "@/components/ui/badge" // Importar Badge para o status
 
 interface Product {
   id: string
@@ -17,7 +18,9 @@ interface Product {
   price?: number
   image_url?: string
   is_featured?: boolean
-  units_per_package?: number // Adicionado
+  units_per_package?: number
+  is_active?: boolean // Novo campo
+  display_order?: number // Novo campo
   created_at: string
 }
 
@@ -31,7 +34,7 @@ export default function AdminProductsPage() {
   }, [])
 
   const fetchProducts = async () => {
-    const { data } = await supabase.from("products").select("*").order("created_at", { ascending: false })
+    const { data } = await supabase.from("products").select("*").order("display_order", { ascending: true }).order("created_at", { ascending: false })
     setProducts(data || [])
     setLoading(false)
   }
@@ -91,10 +94,13 @@ export default function AdminProductsPage() {
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Unidades/Embalagem
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Ordem
                 </th> {/* Novo cabeçalho */}
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ativo
-                </th>
+                  Status
+                </th> {/* Novo cabeçalho */}
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Ações
                 </th>
@@ -127,10 +133,15 @@ export default function AdminProductsPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{product.weight || "-"}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">
                     {product.units_per_package !== null && product.units_per_package !== undefined ? product.units_per_package : "-"}
-                  </td> {/* Exibindo unidades por embalagem */}
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">Sim</span>
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">
+                    {product.display_order !== null && product.display_order !== undefined ? product.display_order : "-"}
+                  </td> {/* Exibindo ordem de exibição */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <Badge variant={product.is_active ? "default" : "secondary"} className={product.is_active ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"}>
+                      {product.is_active ? "Ativo" : "Inativo"}
+                    </Badge>
+                  </td> {/* Exibindo status ativo/inativo */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <div className="flex items-center gap-2">
                       <Link

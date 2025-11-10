@@ -23,7 +23,9 @@ interface Product {
   price?: number
   image_url?: string
   is_featured?: boolean
-  units_per_package?: number // Adicionado
+  units_per_package?: number
+  is_active?: boolean // Novo campo
+  display_order?: number // Novo campo
   created_at: string
 }
 
@@ -42,6 +44,8 @@ export default function ProductsPage() {
     const { data, error } = await supabase
       .from("products")
       .select("*")
+      .eq("is_active", true) // Filtrar apenas produtos ativos
+      .order("display_order", { ascending: true }) // Ordenar por display_order
       .order("created_at", { ascending: false })
 
     if (error) {

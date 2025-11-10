@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog"
 import { CategoryManagementDialog } from "./category-management-dialog"
 import { RichTextEditor } from "@/components/ui/rich-text-editor" // Importar RichTextEditor
+import { Switch } from "@/components/ui/switch" // Importar Switch
 
 const productSchema = z.object({
   name: z.string().min(2, "Nome deve ter no mínimo 2 caracteres"),
@@ -33,6 +34,8 @@ const productSchema = z.object({
   price: z.number().min(0, "Preço deve ser maior que zero").optional().nullable(),
   units_per_package: z.number().int().min(1, "Unidades por embalagem deve ser no mínimo 1").optional().nullable(),
   image_url: z.string().optional().or(z.literal("")),
+  is_active: z.boolean(), // Alterado de z.boolean().default(true) para z.boolean()
+  display_order: z.number().int().min(0, "Ordem de exibição deve ser 0 ou maior").optional().nullable(),
 })
 
 export type ProductFormData = z.infer<typeof productSchema>
@@ -70,11 +73,17 @@ export function ProductForm({ product }: ProductFormProps) {
     formState: { errors },
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
-    defaultValues: product || {
+    defaultValues: product ? {
+      ...product,
+      is_active: product.is_active ?? true, // Garante que is_active é sempre boolean
+      display_order: product.display_order ?? 0, // Garante que display_order é sempre number ou null
+    } : {
       category: "",
       units_per_package: null,
       price: null,
-      description: "", // Definir um valor padrão para a descrição
+      description: "",
+      is_active: true, // Valor padrão explícito para novo produto
+      display_order: 0, // Valor padrão explícito para novo produto
     },
   })
 
@@ -207,6 +216,8 @@ export function ProductForm({ product }: ProductFormProps) {
         category: categoryName,
         price: data.price === null ? null : data.price,
         units_per_package: data.units_per_package === null ? null : data.units_per_package,
+        is_active: data.is_active, // Incluir o status ativo
+        display_order: data.display_order === null ? 0 : data.display_order, // Incluir a ordem de exibição
       }
 
       console.log("[v0] Submitting product data:", productData)
@@ -387,6 +398,38 @@ export function ProductForm({ product }: ProductFormProps) {
             {...register("price", { valueAsNumber: true })}
           />
           {errors.price && <p className="text-sm text-red-600">{errors.price.message}</p>}
+        </div>
+
+        {/* Novo campo: Ativo/Inativo */}
+        <div className="flex items-center justify-between space-x-2 pt-4">
+          <Label htmlFor="is_active">Produto Ativo</Label>
+          <Controller
+            name="is_active"
+            control={control}
+            render={({ field }) => (
+              <Switch
+                id="is_active"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                disabled={isSubmitting}
+              />
+            )}
+          />
+        </div>
+        {errors.is_active && <p className="text-sm text-red-600">{errors.is_active.message}</p>}
+
+        {/* Novo campo: Ordem de Exibição */}
+        <div className="space-y-2">
+          <Label htmlFor="display_order">Ordem de Exibição (0 para padrão)</Label>
+          <Input
+            id="display_order"
+            type="number"
+            step="1"
+            placeholder="0"
+            {...register("display_order", { valueAsNumber: true })}
+            aria-invalid={!!errors.display_order}
+          />
+          {errors.display_order && <p className="text-sm text-red-600">{errors.display_order.message}</p>}
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
