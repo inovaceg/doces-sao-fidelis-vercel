@@ -25,10 +25,34 @@ export function NewsletterForm() {
     register,
     handleSubmit,
     reset,
+    setValue, // Adicionado setValue para o mascaramento
     formState: { errors },
   } = useForm<NewsletterFormData>({
     resolver: zodResolver(newsletterSchema),
   })
+
+  // Função para mascarar o WhatsApp
+  const handleWhatsappInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    // Remove todos os caracteres não numéricos
+    let cleanedValue = value.replace(/\D/g, '');
+
+    // Aplica a máscara: XX-X-XXXX-XXXX
+    let formattedValue = '';
+    if (cleanedValue.length > 0) {
+      formattedValue = cleanedValue.substring(0, 2); // XX
+      if (cleanedValue.length > 2) {
+        formattedValue += '-' + cleanedValue.substring(2, 3); // X
+      }
+      if (cleanedValue.length > 3) {
+        formattedValue += '-' + cleanedValue.substring(3, 7); // XXXX
+      }
+      if (cleanedValue.length > 7) {
+        formattedValue += '-' + cleanedValue.substring(7, 11); // XXXX
+      }
+    }
+    setValue('whatsapp', formattedValue, { shouldValidate: true });
+  };
 
   const onSubmit = async (data: NewsletterFormData) => {
     setIsSubmitting(true)
@@ -70,7 +94,14 @@ export function NewsletterForm() {
       </div>
 
       <div className="space-y-2">
-        <Input placeholder="Seu WhatsApp (XX-X-XXXX-XXXX) *" {...register("whatsapp")} aria-invalid={!!errors.whatsapp} className="bg-white text-foreground" maxLength={14} /> {/* Atualizado placeholder e maxLength */}
+        <Input
+          placeholder="Seu WhatsApp (XX-X-XXXX-XXXX) *"
+          {...register("whatsapp")}
+          onChange={handleWhatsappInputChange} // Usando a função de mascaramento
+          aria-invalid={!!errors.whatsapp}
+          className="bg-white text-foreground"
+          maxLength={14} // Definindo o comprimento máximo para o formato mascarado
+        />
         {errors.whatsapp && <p className="text-sm text-red-200">{errors.whatsapp.message}</p>}
       </div>
 

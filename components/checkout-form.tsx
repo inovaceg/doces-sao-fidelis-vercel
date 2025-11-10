@@ -106,6 +106,29 @@ export function CheckoutForm() {
     fetchAddress()
   }, [watchedCep, setValue])
 
+  // Função para mascarar o telefone
+  const handlePhoneInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    // Remove todos os caracteres não numéricos
+    let cleanedValue = value.replace(/\D/g, '');
+
+    // Aplica a máscara: XX-X-XXXX-XXXX
+    let formattedValue = '';
+    if (cleanedValue.length > 0) {
+      formattedValue = cleanedValue.substring(0, 2); // XX
+      if (cleanedValue.length > 2) {
+        formattedValue += '-' + cleanedValue.substring(2, 3); // X
+      }
+      if (cleanedValue.length > 3) {
+        formattedValue += '-' + cleanedValue.substring(3, 7); // XXXX
+      }
+      if (cleanedValue.length > 7) {
+        formattedValue += '-' + cleanedValue.substring(7, 11); // XXXX
+      }
+    }
+    setValue('phone', formattedValue, { shouldValidate: true });
+  };
+
   const onSubmit = async (data: CheckoutFormData) => {
     setIsSubmitting(true)
 
@@ -199,7 +222,14 @@ export function CheckoutForm() {
 
       <div className="space-y-2">
         <Label htmlFor="phone">Telefone / WhatsApp *</Label>
-        <Input id="phone" placeholder="XX-X-XXXX-XXXX" {...register("phone")} aria-invalid={!!errors.phone} maxLength={14} /> {/* Atualizado placeholder e maxLength */}
+        <Input
+          id="phone"
+          placeholder="XX-X-XXXX-XXXX"
+          {...register("phone")}
+          onChange={handlePhoneInputChange} // Usando a função de mascaramento
+          aria-invalid={!!errors.phone}
+          maxLength={14} // Definindo o comprimento máximo para o formato mascarado
+        />
         {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
       </div>
 
