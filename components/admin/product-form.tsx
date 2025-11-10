@@ -34,7 +34,7 @@ const productSchema = z.object({
   price: z.number().min(0, "Preço deve ser maior que zero").optional().nullable(),
   units_per_package: z.number().int().min(1, "Unidades por embalagem deve ser no mínimo 1").optional().nullable(),
   image_url: z.string().optional().or(z.literal("")),
-  is_active: z.boolean(), // Alterado de z.boolean().default(true) para z.boolean()
+  is_active: z.boolean(),
   display_order: z.number().int().min(0, "Ordem de exibição deve ser 0 ou maior").optional().nullable(),
 })
 
@@ -69,28 +69,39 @@ export function ProductForm({ product }: ProductFormProps) {
     handleSubmit,
     setValue,
     watch,
-    control, // Adicionar control para usar Controller
+    control,
     formState: { errors },
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: product ? {
       ...product,
-      is_active: product.is_active ?? true, // Garante que is_active é sempre boolean
-      display_order: product.display_order ?? 0, // Garante que display_order é sempre number ou null
+      is_active: product.is_active ?? true,
+      display_order: product.display_order ?? null, // Manter como null se não definido para permitir a lógica de "próxima ordem"
     } : {
       category: "",
       units_per_package: null,
       price: null,
       description: "",
-      is_active: true, // Valor padrão explícito para novo produto
-      display_order: 0, // Valor padrão explícito para novo produto
+      is_active: true,
+      display_order: null, // Valor padrão para novo produto, será preenchido se vazio
     },
   })
 
   const watchedImageUrl = watch("image_url")
+  const watchedDisplayOrder = watch("display_order")
 
   useEffect(() => {
     fetchCategories()
+    // Log para verificar o status de autenticação no carregamento do componente
+    const checkAuthStatus = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error("Error fetching session in ProductForm:", error);
+      } else {
+        console.log("Supabase session in ProductForm:", session ? "Authenticated" : "Not Authenticated");
+      }
+    };
+    checkAuthStatus();
   }, [])
 
   // Efeito para definir o valor da categoria no formulário quando as categorias e o produto estiverem carregados
@@ -211,13 +222,26 @@ export function ProductForm({ product }: ProductFormProps) {
       const selectedCategory = categories.find((cat) => cat.id === data.category)
       const categoryName = selectedCategory?.name || data.category
 
+      let finalDisplayOrder = data.display_order;
+      // Se for um NOVO produto e display_order não foi preenchido, buscar a próxima ordem
+      if (!product && (finalDisplayOrder === null || finalDisplayOrder === undefined)) {
+        const response = await fetch("/api/products/next-display-order");
+        if (!response.ok) throw new Error("Failed to fetch next display order");
+        const { nextDisplayOrder } = await response.json();
+        finalDisplayOrder = nextDisplayOrder;
+      } else if (product && (finalDisplayOrder === null || finalDisplayOrder === undefined)) {
+        // Se for um produto EXISTENTE e display_order foi deixado em branco, manter o valor atual
+        finalDisplayOrder = product.display_order ?? 0; // Usar o valor existente ou 0 se nunca foi definido
+      }
+
+
       const productData = {
         ...data,
         category: categoryName,
         price: data.price === null ? null : data.price,
         units_per_package: data.units_per_package === null ? null : data.units_per_package,
-        is_active: data.is_active, // Incluir o status ativo
-        display_order: data.display_order === null ? 0 : data.display_order, // Incluir a ordem de exibição
+        is_active: data.is_active,
+        display_order: finalDisplayOrder,
       }
 
       console.log("[v0] Submitting product data:", productData)

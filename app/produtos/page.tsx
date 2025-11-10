@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { Button } from "@/components/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge" // Correção aqui: de '=>' para 'from'
 import { createClient } from "@/lib/supabase/client"
 import { Package, ShoppingCart, Minus, Plus } from "lucide-react"
 import Link from "next/link"
@@ -131,7 +131,7 @@ export default function ProductsPage() {
                     </Link>
                     <CardHeader>
                       <CardTitle className="text-xl">{product.name}</CardTitle>
-                      <CardDescription className="line-clamp-3">{product.description}</CardDescription>
+                      <CardDescription className="line-clamp-3" dangerouslySetInnerHTML={{ __html: product.description }} />
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">

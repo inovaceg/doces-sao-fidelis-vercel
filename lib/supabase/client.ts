@@ -5,8 +5,10 @@ export function createClient() {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseAnonKey) {
+    console.error("Supabase environment variables are missing!", { supabaseUrl, supabaseAnonKey });
     throw new Error("NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be defined in your .env.local file.")
   }
 
+  console.log("Supabase client initialized with URL:", supabaseUrl);
   return createBrowserClient(supabaseUrl, supabaseAnonKey)
 }
