@@ -3,7 +3,7 @@
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { Button } from "@/components/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { createClient } from "@/lib/supabase/client"
 import { Package, ShoppingCart, Minus, Plus, ArrowLeft } from "lucide-react"
 import Link from "next/link"
@@ -13,6 +13,7 @@ import { useParams, useRouter } from "next/navigation"
 import { useCart } from "@/components/cart-provider"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
+import { Badge } from "@/components/ui/badge" // Importar Badge
 
 interface Product {
   id: string
@@ -35,14 +36,18 @@ export default function ProductDetailPage() {
   const { addItem } = useCart()
 
   const [product, setProduct] = useState<Product | null>(null)
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [quantity, setQuantity] = useState(1)
+  const [relatedQuantities, setRelatedQuantities] = useState<{ [key: string]: number }>({})
+
 
   useEffect(() => {
     fetchProduct()
-  }, [])
+  }, [params.id]) // Re-fetch product when ID changes
 
   const fetchProduct = async () => {
+    setLoading(true)
     const { data, error } = await supabase
       .from("products")
       .select("*")
@@ -52,17 +57,49 @@ export default function ProductDetailPage() {
     if (error) {
       console.error("Error fetching product:", error)
       toast.error("Erro ao carregar detalhes do produto.")
-      router.push("/produtos") // Redireciona se o produto não for encontrado
+      router.push("/produtos")
       return
     }
 
     setProduct(data)
+    setQuantity(1) // Reset quantity when product changes
+    fetchRelatedProducts(data.category, data.id)
     setLoading(false)
+  }
+
+  const fetchRelatedProducts = async (category: string, currentProductId: string) => {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("category", category)
+      .neq("id", currentProductId) // Exclude the current product
+      .limit(5)
+      .order("created_at", { ascending: false })
+
+    if (error) {
+      console.error("Error fetching related products:", error)
+      setRelatedProducts([])
+      return
+    }
+    setRelatedProducts(data || [])
+    const initialRelatedQuantities: { [key: string]: number } = {}
+    data?.forEach(p => {
+      initialRelatedQuantities[p.id] = 1
+    })
+    setRelatedQuantities(initialRelatedQuantities)
   }
 
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity < 1) newQuantity = 1
     setQuantity(newQuantity)
+  }
+
+  const handleRelatedQuantityChange = (productId: string, newQuantity: number) => {
+    if (newQuantity < 1) newQuantity = 1
+    setRelatedQuantities(prev => ({
+      ...prev,
+      [productId]: newQuantity,
+    }))
   }
 
   const handleAddToCart = () => {
@@ -75,6 +112,16 @@ export default function ProductDetailPage() {
         units_per_package: product.units_per_package,
       }, quantity)
     }
+  }
+
+  const handleAddRelatedToCart = (relatedProduct: Product, quantityToAdd: number) => {
+    addItem({
+      id: relatedProduct.id,
+      name: relatedProduct.name,
+      image_url: relatedProduct.image_url,
+      weight: relatedProduct.weight,
+      units_per_package: relatedProduct.units_per_package,
+    }, quantityToAdd)
   }
 
   if (loading) {
@@ -198,6 +245,80 @@ export default function ProductDetailPage() {
                 </div>
               </div>
             </Card>
+
+            {relatedProducts.length > 0 && (
+              <div className="mt-16">
+                <h2 className="font-serif text-2xl lg:text-3xl font-bold text-foreground mb-8 text-center">
+                  Outros produtos que você pode gostar
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                  {relatedProducts.map((relatedProduct) => (
+                    <Card key={relatedProduct.id} className="overflow-hidden group">
+                      <Link href={`/produtos/${relatedProduct.id}`} className="block">
+                        <div className="aspect-square relative overflow-hidden bg-muted">
+                          {relatedProduct.image_url ? (
+                            <Image
+                              src={relatedProduct.image_url}
+                              alt={relatedProduct.name}
+                              fill
+                              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Package className="size-12 text-muted-foreground/30" />
+                            </div>
+                          )}
+                          {relatedProduct.is_featured && (
+                            <div className="absolute top-2 right-2">
+                              <Badge className="bg-primary text-primary-foreground text-xs">Destaque</Badge>
+                            </div>
+                          )}
+                        </div>
+                      </Link>
+                      <CardHeader className="p-4 pb-2">
+                        <CardTitle className="text-base line-clamp-2">{relatedProduct.name}</CardTitle>
+                        <CardDescription className="text-xs line-clamp-2">{relatedProduct.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-4 pt-0">
+                        {relatedProduct.price !== null && relatedProduct.price !== undefined && (
+                          <p className="text-sm font-bold text-primary mb-2">R$ {relatedProduct.price.toFixed(2)}</p>
+                        )}
+                        <div className="flex items-center gap-2 mt-2">
+                          <Button
+                            variant="outline"
+                            size="icon-sm"
+                            onClick={() => handleRelatedQuantityChange(relatedProduct.id, relatedQuantities[relatedProduct.id] - 1)}
+                            disabled={relatedQuantities[relatedProduct.id] <= 1}
+                          >
+                            <Minus className="size-3" />
+                          </Button>
+                          <Input
+                            type="number"
+                            value={relatedQuantities[relatedProduct.id]}
+                            onChange={(e) => handleRelatedQuantityChange(relatedProduct.id, parseInt(e.target.value))}
+                            className="w-12 text-center h-8 text-sm"
+                            min="1"
+                          />
+                          <Button
+                            variant="outline"
+                            size="icon-sm"
+                            onClick={() => handleRelatedQuantityChange(relatedProduct.id, relatedQuantities[relatedProduct.id] + 1)}
+                          >
+                            <Plus className="size-3" />
+                          </Button>
+                        </div>
+                        <Button
+                          className="w-full mt-3 text-xs h-8"
+                          onClick={() => handleAddRelatedToCart(relatedProduct, relatedQuantities[relatedProduct.id])}
+                        >
+                          <ShoppingCart className="size-3 mr-1" /> Adicionar
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </main>
