@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useRef, useCallback, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -201,6 +201,10 @@ export function BannerForm() {
                       Clique para fazer upload ou arraste uma imagem
                       <br />
                       <span className="text-xs text-gray-500">PNG, JPG ou WEBP (máx. 5MB)</span>
+                      <br />
+                      <span className="text-xs text-gray-500 font-semibold">
+                        Recomendado: Proporção 16:9 (ex: 1920x1080 pixels)
+                      </span>
                     </p>
                   </>
                 )}
