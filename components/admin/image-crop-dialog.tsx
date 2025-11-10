@@ -71,7 +71,7 @@ export function ImageCropDialog({ open, onOpenChange, imageUrl, onCropComplete, 
     if (image && canvasRef.current) {
       drawImage()
     }
-  }, [image, zoom, rotation, position, drawImage]) // drawImage agora está declarado antes de ser usado aqui
+  }, [image, zoom, rotation, position, drawImage])
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     setIsDragging(true)
@@ -134,7 +134,7 @@ export function ImageCropDialog({ open, onOpenChange, imageUrl, onCropComplete, 
               <Slider
                 value={[zoom]}
                 onValueChange={(value) => setZoom(value[0])}
-                min={50}
+                min={10}
                 max={300}
                 step={1}
                 className="flex-1"
