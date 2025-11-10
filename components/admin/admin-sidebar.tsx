@@ -83,8 +83,11 @@ export function AdminSidebar() {
                         : "text-[#6b6b6b] hover:bg-[#ddd8d0] hover:text-[#2d2d2d]",
                     )}
                   >
-                    <item.icon className="size-4" />
-                    {item.name}
+                    {/* Envolver o ícone e o nome em um único span */}
+                    <span>
+                      <item.icon className="size-4" />
+                      {item.name}
+                    </span>
                   </Link>
                 </li>
               )
