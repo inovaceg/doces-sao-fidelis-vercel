@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Search, Eye, Trash2 } from "lucide-react"
 import { toast } from "sonner"
+import { QuoteDetailsDialog } from "@/components/admin/quote-details-dialog" // Importar o novo diálogo
+import { ScrollArea } from "@/components/ui/scroll-area" // Importar ScrollArea para a tabela
 
 interface QuoteRequest {
   id: string
@@ -24,6 +26,8 @@ export default function AdminQuotesPage() {
   const [quotes, setQuotes] = useState<QuoteRequest[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [loading, setLoading] = useState(true)
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false) // Estado para o diálogo de detalhes
+  const [selectedQuote, setSelectedQuote] = useState<QuoteRequest | null>(null) // Estado para o orçamento selecionado
   const supabase = createClient()
 
   useEffect(() => {
@@ -31,15 +35,14 @@ export default function AdminQuotesPage() {
   }, [])
 
   const fetchQuotes = async () => {
-    setLoading(true); // Garante que o estado de carregamento é ativado
+    setLoading(true);
     const { data, error } = await supabase.from("quote_requests").select("*").order("created_at", { ascending: false })
     
     if (error) {
       console.error("Erro ao buscar solicitações de orçamento do Supabase:", error);
       toast.error("Erro ao carregar solicitações de orçamento.");
-      setQuotes([]); // Garante que a lista fica vazia em caso de erro
+      setQuotes([]);
     } else {
-      console.log("Dados de orçamentos recebidos do Supabase:", data); // Log para depuração
       setQuotes(data || []);
     }
     setLoading(false)
@@ -58,9 +61,14 @@ export default function AdminQuotesPage() {
     }
   }
 
+  const handleViewDetails = (quote: QuoteRequest) => {
+    setSelectedQuote(quote)
+    setIsDetailsDialogOpen(true)
+  }
+
   const filteredQuotes = quotes.filter(
     (quote) =>
-      (quote.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) || // Adicionada verificação de nulidade
+      (quote.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       quote.contact_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       quote.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (quote.product_interest && quote.product_interest.toLowerCase().includes(searchTerm.toLowerCase()))),
@@ -94,76 +102,80 @@ export default function AdminQuotesPage() {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Empresa
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Contato
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  E-mail
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Telefone
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Produtos
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredQuotes.map((quote) => (
-                <tr key={quote.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a] font-medium">
-                    {quote.company_name || "-"} {/* Exibe "-" se for nulo */}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{quote.contact_name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{quote.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{quote.phone}</td>
-                  <td className="px-6 py-4 text-sm text-[#4a4a4a]">{quote.product_interest || "-"}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(quote.created_at).toLocaleString("pt-BR")}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() =>
-                          alert(
-                            `Empresa: ${quote.company_name || "-"}\nContato: ${quote.contact_name}\nTelefone: ${quote.phone}\nE-mail: ${quote.email}\nProdutos de Interesse: ${quote.product_interest || "-"}\nQuantidade: ${quote.quantity || "-"}\nEndereço: ${quote.address || "-"}, ${quote.city || "-"} - ${quote.state || "-"}\n\nMensagem:\n${quote.message || "Nenhuma mensagem adicional"}`,
-                          )
-                        }
-                        className="text-gray-600 hover:text-[#ff8800]"
-                        title="Ver detalhes"
-                      >
-                        <Eye className="size-4" />
-                      </button>
-                      <button
-                        onClick={() => deleteQuote(quote.id)}
-                        className="text-gray-600 hover:text-red-600"
-                        title="Excluir"
-                      >
-                        <Trash2 className="size-4" />
-                      </button>
-                    </div>
-                  </td>
+        <ScrollArea className="h-[calc(100vh-250px)]"> {/* Adicionado ScrollArea para a tabela */}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Empresa
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Contato
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    E-mail
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Telefone
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Produtos
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ações
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredQuotes.map((quote) => (
+                  <tr key={quote.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a] font-medium">
+                      {quote.company_name || "-"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{quote.contact_name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{quote.email}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{quote.phone}</td>
+                    <td className="px-6 py-4 text-sm text-[#4a4a4a]">{quote.product_interest || "-"}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Date(quote.created_at).toLocaleString("pt-BR")}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleViewDetails(quote)}
+                          className="text-gray-600 hover:text-[#ff8800]"
+                          title="Ver detalhes"
+                        >
+                          <Eye className="size-4" />
+                        </button>
+                        <button
+                          onClick={() => deleteQuote(quote.id)}
+                          className="text-gray-600 hover:text-red-600"
+                          title="Excluir"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-          {filteredQuotes.length === 0 && (
-            <div className="text-center py-12 text-gray-500">Nenhuma solicitação encontrada</div>
-          )}
-        </div>
+            {filteredQuotes.length === 0 && (
+              <div className="text-center py-12 text-gray-500">Nenhuma solicitação encontrada</div>
+            )}
+          </div>
+        </ScrollArea>
       </div>
+
+      <QuoteDetailsDialog
+        open={isDetailsDialogOpen}
+        onOpenChange={setIsDetailsDialogOpen}
+        quote={selectedQuote}
+      />
     </main>
   )
 }
