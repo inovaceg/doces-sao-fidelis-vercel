@@ -203,7 +203,7 @@ export function BannerForm() {
                       <span className="text-xs text-gray-500">PNG, JPG ou WEBP (máx. 5MB)</span>
                       <br />
                       <span className="text-xs text-gray-500 font-semibold">
-                        Recomendado: Proporção 16:9 (ex: 1920x1080 pixels)
+                        Recomendado: Proporção 16:9 (ex: 1920 pixels de largura por 1080 pixels de altura)
                       </span>
                     </p>
                   </>
