@@ -223,7 +223,7 @@ export default async function HomePage() {
                   </div>
                   <CardHeader>
                     <CardTitle>{product.name}</CardTitle>
-                    <CardDescription dangerouslySetInnerHTML={{ __html: product.description }} />
+                    <CardDescription className="line-clamp-3" dangerouslySetInnerHTML={{ __html: product.description }} />
                   </CardHeader>
                 </Card>
               ))}
