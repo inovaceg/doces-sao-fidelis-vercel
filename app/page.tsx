@@ -110,10 +110,10 @@ export default async function HomePage() {
                 size="default" // Adjusted button size for mobile
                 className="rounded-full border-white text-white hover:bg-white/10 bg-transparent"
               >
-                <Link href="/contato">Entre em Contato</Link>
+                <Link href="/contato"><span>Entre em Contato</span></Link>
               </Button>
               <Button asChild size="default" className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90"> {/* Adjusted button size for mobile */}
-                <Link href="#newsletter-section">Cadastre-se para receber novidades</Link>
+                <Link href="#newsletter-section"><span>Cadastre-se para receber novidades</span></Link>
               </Button>
             </div>
           </div>
@@ -401,7 +401,7 @@ export default async function HomePage() {
                     variant="ghost"
                     className="text-primary-foreground hover:bg-primary-foreground/10"
                   >
-                    <Link href="/produtos">Ver Todos os Produtos</Link>
+                    <Link href="/produtos"><span>Ver Todos os Produtos</span></Link>
                   </Button>
                 </div>
               </div>
