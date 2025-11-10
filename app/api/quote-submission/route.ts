@@ -11,9 +11,9 @@ export async function POST(request: Request) {
       .from("quote_requests")
       .insert([
         {
-          company_name: formData.companyName,
-          contact_name: formData.fullName, // Usar fullName como contact_name
-          email: formData.email,
+          company_name: formData.companyName || null, // Usar companyName, pode ser null se não for CNPJ
+          contact_name: formData.fullName,
+          email: formData.email, // Adicionado campo de e-mail
           phone: formData.phone,
           address: `${formData.address}, ${formData.number}${formData.complement ? `, ${formData.complement}` : ''}`,
           city: formData.city,

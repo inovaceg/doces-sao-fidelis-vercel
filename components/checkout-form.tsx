@@ -16,7 +16,9 @@ import { useCart } from "@/components/cart-provider" // Importar useCart
 const checkoutSchema = z.object({
   documentType: z.enum(["cpf", "cnpj"], { message: "Selecione o tipo de documento" }),
   documentNumber: z.string().min(11, "Documento inválido").max(18, "Documento inválido"),
+  companyName: z.string().min(2, "Nome da empresa deve ter no mínimo 2 caracteres").optional(), // Tornar opcional aqui
   fullName: z.string().min(3, "Nome completo deve ter no mínimo 3 caracteres"),
+  email: z.string().email("E-mail inválido"), // Adicionado campo de e-mail
   phone: z.string().min(10, "Telefone/WhatsApp inválido"),
   cep: z.string().min(8, "CEP inválido").max(9, "CEP inválido"), // 8 dígitos + hífen
   address: z.string().min(3, "Endereço inválido"),
@@ -67,9 +69,14 @@ export function CheckoutForm() {
   // Efeito para preencher o endereço automaticamente ao digitar o CEP
   useEffect(() => {
     const fetchAddress = async () => {
-      if (watchedCep && watchedCep.length === 8) { // Apenas se o CEP tiver 8 dígitos (sem hífen)
+      const cepValue = watchedCep?.replace(/\D/g, ''); // Remove caracteres não numéricos
+      if (cepValue && cepValue.length === 8) {
         try {
-          const response = await fetch(`https://viacep.com.br/ws/${watchedCep}/json/`)
+          const response = await fetch(`https://viacep.com.br/ws/${cepValue}/json/`)
+          if (!response.ok) {
+            // Se a resposta não for OK (ex: 404, 500), lançar um erro
+            throw new Error(`Erro HTTP: ${response.status}`);
+          }
           const data: ViaCepResponse = await response.json()
 
           if (!data.erro) {
@@ -87,7 +94,12 @@ export function CheckoutForm() {
           }
         } catch (error) {
           console.error("Erro ao buscar CEP:", error)
-          toast.error("Erro ao buscar CEP. Tente novamente.")
+          toast.error("Erro ao buscar CEP. Verifique o número e sua conexão com a internet.")
+          // Limpa os campos se houver erro na busca
+          setValue("address", "")
+          setValue("neighborhood", "")
+          setValue("city", "")
+          setValue("state", "")
         }
       }
     }
@@ -159,10 +171,30 @@ export function CheckoutForm() {
         {errors.documentNumber && <p className="text-sm text-destructive">{errors.documentNumber.message}</p>}
       </div>
 
+      {watchedDocumentType === "cnpj" && ( // Campo de nome da empresa aparece apenas para CNPJ
+        <div className="space-y-2">
+          <Label htmlFor="companyName">Nome da Empresa *</Label>
+          <Input id="companyName" placeholder="Nome da sua empresa" {...register("companyName")} aria-invalid={!!errors.companyName} />
+          {errors.companyName && <p className="text-sm text-destructive">{errors.companyName.message}</p>}
+        </div>
+      )}
+
       <div className="space-y-2">
         <Label htmlFor="fullName">Nome Completo *</Label>
         <Input id="fullName" placeholder="Seu nome completo" {...register("fullName")} aria-invalid={!!errors.fullName} />
         {errors.fullName && <p className="text-sm text-destructive">{errors.fullName.message}</p>}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="email">E-mail *</Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="seu@email.com"
+          {...register("email")}
+          aria-invalid={!!errors.email}
+        />
+        {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
       </div>
 
       <div className="space-y-2">
