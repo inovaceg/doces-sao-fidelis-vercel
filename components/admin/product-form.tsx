@@ -137,8 +137,8 @@ export function ProductForm({ product }: ProductFormProps) {
       return
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("A imagem deve ter no máximo 5MB")
+    if (file.size > 10 * 1024 * 1024) { // Aumentado para 10MB
+      toast.error("A imagem deve ter no máximo 10MB")
       return
     }
 
@@ -325,7 +325,7 @@ export function ProductForm({ product }: ProductFormProps) {
                     <p className="text-xs md:text-sm text-gray-600">
                       Clique para fazer upload ou arraste uma imagem
                       <br />
-                      <span className="text-xs text-gray-500">PNG, JPG ou WEBP (máx. 5MB)</span>
+                      <span className="text-xs text-gray-500">PNG, JPG ou WEBP (máx. 10MB)</span>
                     </p>
                   </>
                 )
