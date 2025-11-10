@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area" // Importar ScrollArea
 import { Label } from "@/components/ui/label"
+import { formatPhoneNumber } from "@/lib/utils" // Importar a função de formatação
 
 interface QuoteRequest {
   id: string
@@ -64,7 +65,7 @@ export function QuoteDetailsDialog({ open, onOpenChange, quote }: QuoteDetailsDi
             </div>
             <div>
               <Label className="font-semibold">Telefone:</Label>
-              <p className="text-sm text-muted-foreground">{quote.phone}</p>
+              <p className="text-sm text-muted-foreground">{formatPhoneNumber(quote.phone)}</p> {/* Aplicando a formatação aqui */}
             </div>
             {(quote.address || quote.city || quote.state) && (
               <div>
