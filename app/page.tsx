@@ -60,7 +60,7 @@ export default async function HomePage() {
       <SiteHeader />
 
       {/* Hero Section */}
-      <section className="relative min-h-[600px] flex items-center">
+      <section className="relative h-[calc(100vh-4rem)] max-h-[700px] flex items-center justify-center text-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
             src={bannerImageUrl}
@@ -69,15 +69,16 @@ export default async function HomePage() {
             className="object-cover w-full h-full"
             priority
           />
-          <div className="absolute inset-0 bg-black/50" />
+          {/* Overlay com um gradiente sutil para melhor contraste do texto */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20" />
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-20">
-          <div className="max-w-3xl space-y-6 text-center mx-auto">
-            <h1 className="font-serif text-4xl lg:text-6xl font-bold text-white text-balance">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-16 md:py-24 lg:py-32 animate-in fade-in duration-1000">
+          <div className="max-w-3xl space-y-6 mx-auto">
+            <h1 className="font-serif text-4xl lg:text-6xl font-bold text-white text-balance drop-shadow-lg">
               Doces São Fidélis: Sabor Autêntico que Atravessa Gerações
             </h1>
-            <p className="text-lg text-white/90 text-pretty">
+            <p className="text-lg text-white/90 text-pretty drop-shadow-md">
               Produzindo bananadas e gomas de amido desde 2000 com a tradição artesanal.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
