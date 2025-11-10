@@ -8,13 +8,14 @@ export function SiteFooter() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid md:grid-cols-3 gap-12">
           <div className="space-y-4">
-            <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Design%20sem%20nome%20%281%29%20%281%29-vqBz106SPSsejO2YFogjWyruHk8EV4.png"
-              alt="Doces São Fidélis"
-              width={120}
-              height={120}
-              className="mb-4"
-            />
+            <div className="relative w-[120px] h-[120px] mb-4"> {/* Contêiner para a imagem */}
+              <Image
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Design%20sem%20nome%20%281%29%20%281%29-vqBz106SPSsejO2YFogjWyruHk8EV4.png"
+                alt="Doces São Fidélis"
+                fill // Usar fill para preencher o contêiner
+                className="object-contain" // Manter a proporção dentro do contêiner
+              />
+            </div>
             <p className="text-sm leading-relaxed">
               Desde 2000 produzindo bananadas e gomas de amido com tradição e qualidade que atravessam gerações.
             </p>
