@@ -7,7 +7,7 @@ import { toast } from "sonner"
 
 interface QuoteRequest {
   id: string
-  company_name: string
+  company_name: string | null // Pode ser nulo agora
   contact_name: string
   email: string
   phone: string
@@ -60,10 +60,10 @@ export default function AdminQuotesPage() {
 
   const filteredQuotes = quotes.filter(
     (quote) =>
-      quote.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (quote.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) || // Adicionada verificação de nulidade
       quote.contact_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       quote.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (quote.product_interest && quote.product_interest.toLowerCase().includes(searchTerm.toLowerCase())),
+      (quote.product_interest && quote.product_interest.toLowerCase().includes(searchTerm.toLowerCase()))),
   )
 
   if (loading) {
@@ -123,7 +123,7 @@ export default function AdminQuotesPage() {
               {filteredQuotes.map((quote) => (
                 <tr key={quote.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a] font-medium">
-                    {quote.company_name}
+                    {quote.company_name || "-"} {/* Exibe "-" se for nulo */}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{quote.contact_name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{quote.email}</td>
@@ -137,7 +137,7 @@ export default function AdminQuotesPage() {
                       <button
                         onClick={() =>
                           alert(
-                            `Empresa: ${quote.company_name}\nContato: ${quote.contact_name}\nTelefone: ${quote.phone}\nE-mail: ${quote.email}\nProdutos de Interesse: ${quote.product_interest || "-"}\nQuantidade: ${quote.quantity || "-"}\nEndereço: ${quote.address || "-"}, ${quote.city || "-"} - ${quote.state || "-"}\n\nMensagem:\n${quote.message || "Nenhuma mensagem adicional"}`,
+                            `Empresa: ${quote.company_name || "-"}\nContato: ${quote.contact_name}\nTelefone: ${quote.phone}\nE-mail: ${quote.email}\nProdutos de Interesse: ${quote.product_interest || "-"}\nQuantidade: ${quote.quantity || "-"}\nEndereço: ${quote.address || "-"}, ${quote.city || "-"} - ${quote.state || "-"}\n\nMensagem:\n${quote.message || "Nenhuma mensagem adicional"}`,
                           )
                         }
                         className="text-gray-600 hover:text-[#ff8800]"
