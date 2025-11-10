@@ -66,8 +66,8 @@ export default async function HomePage() {
       <SiteHeader />
 
       {/* Hero Section */}
-      <section className="relative flex items-center justify-center text-center overflow-hidden"> {/* Removido min-h-[...] */}
-        <div className="absolute inset-0 z-0 aspect-video">
+      <section className="relative flex items-center justify-center text-center overflow-hidden h-[60vh] md:h-[70vh] lg:h-[80vh]"> {/* Adjusted height for responsiveness */}
+        <div className="absolute inset-0 z-0"> {/* Removed aspect-video here */}
           <picture>
             {/* Mobile (max-width: 767px) */}
             <source media="(max-width: 767px)" src={mobileBannerUrl} />
@@ -79,24 +79,24 @@ export default async function HomePage() {
             <img
               src={desktopBannerUrl} // Usar a imagem desktop como fallback principal
               alt="Doces São Fidélis"
-              className="absolute inset-0 w-full h-full object-cover" // Usando classes Tailwind para preencher e cobrir
-              // 'priority' é uma prop do Next/Image, removida para <img> padrão
+              className="absolute inset-0 w-full h-full object-cover" // Using Tailwind classes to fill and cover
+              // 'priority' is a Next/Image prop, removed for standard <img>
             />
           </picture>
           {/* Overlay com um gradiente sutil para melhor contraste do texto */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20" />
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-16 md:py-24 lg:py-32 animate-in fade-in duration-1000">
-          <div className="max-w-3xl space-y-6 mx-auto">
-            <h1 className="font-serif text-4xl lg:text-6xl font-bold text-white text-balance drop-shadow-lg">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-8 sm:py-16 md:py-24 lg:py-32 animate-in fade-in duration-1000"> {/* Adjusted padding */}
+          <div className="max-w-3xl space-y-4 mx-auto"> {/* Reduced space-y for mobile */}
+            <h1 className="font-serif text-3xl lg:text-6xl font-bold text-white text-balance drop-shadow-lg"> {/* Adjusted text size for mobile */}
               Doces São Fidélis: Sabor Autêntico que Atravessa Gerações
             </h1>
-            <p className="text-lg text-white/90 text-pretty drop-shadow-md">
+            <p className="text-base text-white/90 text-pretty drop-shadow-md"> {/* Adjusted text size for mobile */}
               Produzindo bananadas e gomas de amido desde 2000 com a tradição artesanal.
             </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Button asChild size="lg" className="rounded-full">
+            <div className="flex flex-wrap gap-3 justify-center"> {/* Reduced gap for mobile */}
+              <Button asChild size="default" className="rounded-full"> {/* Adjusted button size for mobile */}
                 <Link href="/produtos">
                   Veja Nosso Catálogo
                   <ArrowRight />
@@ -105,12 +105,12 @@ export default async function HomePage() {
               <Button
                 asChild
                 variant="outline"
-                size="lg"
+                size="default" // Adjusted button size for mobile
                 className="rounded-full border-white text-white hover:bg-white/10 bg-transparent"
               >
                 <Link href="/contato">Entre em Contato</Link>
               </Button>
-              <Button asChild size="lg" className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90">
+              <Button asChild size="default" className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90"> {/* Adjusted button size for mobile */}
                 <Link href="#newsletter-section">Cadastre-se para receber novidades</Link>
               </Button>
             </div>
