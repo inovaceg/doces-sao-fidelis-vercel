@@ -27,17 +27,17 @@ export default function CartPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <h1 className="font-serif text-4xl lg:text-5xl font-bold text-foreground mb-8 text-center">
-              Seu Carrinho
+              Seu Orçamento
             </h1>
 
             {getTotalItems() === 0 ? (
               <div className="text-center py-16">
                 <ShoppingCart className="size-24 text-muted-foreground/30 mx-auto mb-6" />
                 <h2 className="font-serif text-2xl font-bold text-foreground mb-2">
-                  Seu carrinho está vazio
+                  Sua lista de orçamento está vazia
                 </h2>
                 <p className="text-muted-foreground mb-6">
-                  Adicione alguns de nossos deliciosos doces para começar seu pedido!
+                  Adicione alguns de nossos deliciosos doces para sua solicitação de orçamento!
                 </p>
                 <Button asChild size="lg">
                   <Link href="/produtos">Ver Produtos</Link>
@@ -110,7 +110,7 @@ export default function CartPage() {
                 <div className="md:col-span-1">
                   <Card className="p-6 space-y-6">
                     <CardHeader className="p-0">
-                      <CardTitle className="text-xl">Resumo do Pedido</CardTitle>
+                      <CardTitle className="text-xl">Resumo do Orçamento</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0 space-y-4">
                       <div className="flex justify-between text-muted-foreground">
@@ -118,13 +118,13 @@ export default function CartPage() {
                         <span>{getTotalItems()}</span>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Os preços serão informados após a finalização do pedido e contato da nossa equipe.
+                        Os preços serão informados após a finalização da solicitação e contato da nossa equipe.
                       </p>
                       <Button onClick={handleCheckout} className="w-full" size="lg">
-                        Finalizar Pedido
+                        Enviar Solicitação de Orçamento
                       </Button>
                       <Button variant="outline" onClick={clearCart} className="w-full">
-                        Limpar Carrinho
+                        Limpar Orçamento
                       </Button>
                     </CardContent>
                   </Card>

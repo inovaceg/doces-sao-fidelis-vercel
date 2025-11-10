@@ -43,12 +43,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((i) => i.id === item.id)
       if (existingItem) {
-        toast.info(`Quantidade de "${item.name}" atualizada no carrinho.`)
+        toast.info(`Quantidade de "${item.name}" atualizada no orçamento.`)
         return prevItems.map((i) =>
           i.id === item.id ? { ...i, quantity: i.quantity + quantityToAdd } : i
         )
       } else {
-        toast.success(`"${item.name}" adicionado ao carrinho!`)
+        toast.success(`"${item.name}" adicionado ao orçamento!`)
         return [...prevItems, { ...item, quantity: quantityToAdd }]
       }
     })
@@ -58,7 +58,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCartItems((prevItems) => {
       const removedItem = prevItems.find(item => item.id === id);
       if (removedItem) {
-        toast.info(`"${removedItem.name}" removido do carrinho.`);
+        toast.info(`"${removedItem.name}" removido do orçamento.`);
       }
       return prevItems.filter((item) => item.id !== id);
     });
@@ -77,7 +77,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = useCallback(() => {
     setCartItems([])
-    toast.info("Carrinho limpo.")
+    toast.info("Orçamento limpo.")
   }, [])
 
   const getTotalItems = useCallback(() => {

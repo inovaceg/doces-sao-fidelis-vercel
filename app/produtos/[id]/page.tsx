@@ -249,7 +249,7 @@ export default function ProductDetailPage() {
                     </Button>
                   </div>
                   <Button className="flex-1" size="lg" onClick={handleAddToCart}>
-                    <ShoppingCart className="size-5 mr-2" /> Adicionar ao Carrinho
+                    <ShoppingCart className="size-5 mr-2" /> Adicionar ao Orçamento
                   </Button>
                 </div>
               </div>
@@ -320,7 +320,7 @@ export default function ProductDetailPage() {
                           className="w-full mt-3 text-xs h-8"
                           onClick={() => handleAddRelatedToCart(relatedProduct, relatedQuantities[relatedProduct.id])}
                         >
-                          <ShoppingCart className="size-3 mr-1" /> Adicionar
+                          <ShoppingCart className="size-3 mr-1" /> Adicionar ao Orçamento
                         </Button>
                       </CardContent>
                     </Card>

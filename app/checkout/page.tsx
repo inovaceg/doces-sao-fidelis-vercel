@@ -14,12 +14,12 @@ export default function CheckoutPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <h1 className="font-serif text-4xl lg:text-5xl font-bold text-foreground mb-8 text-center">
-              Finalizar Pedido
+              Finalizar Solicitação de Orçamento
             </h1>
 
             <Card className="p-6">
               <CardHeader className="p-0 mb-6">
-                <CardTitle className="text-2xl">Seus Dados para o Pedido</CardTitle>
+                <CardTitle className="text-2xl">Seus Dados para a Solicitação de Orçamento</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <CheckoutForm />

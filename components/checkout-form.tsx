@@ -98,25 +98,30 @@ export function CheckoutForm() {
     setIsSubmitting(true)
 
     if (cartItems.length === 0) {
-      toast.error("Seu carrinho está vazio. Adicione produtos antes de finalizar o pedido.")
+      toast.error("Sua lista de orçamento está vazia. Adicione produtos antes de enviar a solicitação.")
       setIsSubmitting(false)
       return
     }
 
-    // TODO: Enviar os dados do formulário e os itens do carrinho para o Supabase
-    console.log("Dados do Cliente:", data)
-    console.log("Itens do Carrinho:", cartItems)
-
     try {
-      // Simulação de envio para o backend
-      await new Promise((resolve) => setTimeout(resolve, 2000)) // Simula uma chamada de API
+      const response = await fetch("/api/quote-submission", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ formData: data, cartItems }),
+      })
 
-      toast.success("Pedido finalizado com sucesso! Entraremos em contato em breve.")
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erro ao enviar solicitação de orçamento");
+      }
+
+      toast.success("Solicitação de orçamento enviada com sucesso! Entraremos em contato em breve.")
       clearCart() // Limpa o carrinho após a finalização
       reset() // Limpa o formulário
       // Redirecionar para uma página de confirmação ou home
-    } catch (error) {
-      toast.error("Erro ao finalizar pedido. Tente novamente.")
+    } catch (error: any) {
+      console.error("Erro ao finalizar pedido:", error);
+      toast.error(error.message || "Erro ao finalizar pedido. Tente novamente.");
     } finally {
       setIsSubmitting(false)
     }
@@ -213,10 +218,10 @@ export function CheckoutForm() {
         {isSubmitting ? (
           <>
             <Loader2 className="animate-spin" />
-            Finalizando Pedido...
+            Enviando Solicitação...
           </>
         ) : (
-          "Confirmar Pedido"
+          "Confirmar Solicitação de Orçamento"
         )}
       </Button>
     </form>

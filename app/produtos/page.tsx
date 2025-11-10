@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { Button } from "@/components/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge" // Correção aqui: de '=>' para 'from'
+import { Badge } from "@/components/ui/badge"
 import { createClient } from "@/lib/supabase/client"
 import { Package, ShoppingCart, Minus, Plus } from "lucide-react"
 import Link from "next/link"
@@ -188,7 +188,7 @@ export default function ProductsPage() {
                             units_per_package: product.units_per_package, // Passa o novo campo
                           }, quantities[product.id])} // Passa a quantidade selecionada
                         >
-                          <ShoppingCart className="size-4 mr-2" /> Adicionar ao Carrinho
+                          <ShoppingCart className="size-4 mr-2" /> Adicionar ao Orçamento
                         </Button>
                       </div>
                     </CardContent>
