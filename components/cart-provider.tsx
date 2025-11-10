@@ -8,12 +8,13 @@ interface CartItem {
   name: string
   image_url?: string
   weight?: string
+  units_per_package?: number // Adicionado
   quantity: number
 }
 
 interface CartContextType {
   cartItems: CartItem[]
-  addItem: (item: Omit<CartItem, 'quantity'>, quantity?: number) => void // Adicionado 'quantity?'
+  addItem: (item: Omit<CartItem, 'quantity'>, quantity?: number) => void
   removeItem: (id: string) => void
   updateQuantity: (id: string, quantity: number) => void
   clearCart: () => void
@@ -38,17 +39,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('doces-sao-fidelis-cart', JSON.stringify(cartItems))
   }, [cartItems])
 
-  const addItem = useCallback((item: Omit<CartItem, 'quantity'>, quantityToAdd: number = 1) => { // Modificado para aceitar quantityToAdd
+  const addItem = useCallback((item: Omit<CartItem, 'quantity'>, quantityToAdd: number = 1) => {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((i) => i.id === item.id)
       if (existingItem) {
         toast.info(`Quantidade de "${item.name}" atualizada no carrinho.`)
         return prevItems.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + quantityToAdd } : i // Usa quantityToAdd
+          i.id === item.id ? { ...i, quantity: i.quantity + quantityToAdd } : i
         )
       } else {
         toast.success(`"${item.name}" adicionado ao carrinho!`)
-        return [...prevItems, { ...item, quantity: quantityToAdd }] // Usa quantityToAdd
+        return [...prevItems, { ...item, quantity: quantityToAdd }]
       }
     })
   }, [])

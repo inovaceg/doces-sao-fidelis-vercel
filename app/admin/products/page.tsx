@@ -17,6 +17,7 @@ interface Product {
   price?: number
   image_url?: string
   is_featured?: boolean
+  units_per_package?: number // Adicionado
   created_at: string
 }
 
@@ -86,8 +87,11 @@ export default function AdminProductsPage() {
                   Preço
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Estoque
+                  Peso
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Unidades/Embalagem
+                </th> {/* Novo cabeçalho */}
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Ativo
                 </th>
@@ -121,6 +125,9 @@ export default function AdminProductsPage() {
                     {product.price ? `R$ ${product.price.toFixed(2)}` : "-"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{product.weight || "-"}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">
+                    {product.units_per_package !== null && product.units_per_package !== undefined ? product.units_per_package : "-"}
+                  </td> {/* Exibindo unidades por embalagem */}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">Sim</span>
                   </td>

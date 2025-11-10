@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
-import { Loader2, Upload, Plus, Pencil, X } from "lucide-react"
+import { Loader2, Upload, Plus, Pencil, X, Settings } from "lucide-react" // Adicionado Settings
 import { ImageCropDialog } from "./image-crop-dialog"
 import { Button } from "@/components/ui/button"
 import {
@@ -23,6 +23,7 @@ import {
   DialogFooter,
   DialogDescription,
 } from "@/components/ui/dialog"
+import { CategoryManagementDialog } from "./category-management-dialog" // Importar o novo diálogo
 
 const productSchema = z.object({
   name: z.string().min(2, "Nome deve ter no mínimo 2 caracteres"),
@@ -30,6 +31,7 @@ const productSchema = z.object({
   description: z.string().min(10, "Descrição deve ter no mínimo 10 caracteres"),
   weight: z.string().optional(),
   price: z.number().min(0, "Preço deve ser maior que zero").optional().nullable(),
+  units_per_package: z.number().int().min(1, "Unidades por embalagem deve ser no mínimo 1").optional().nullable(), // Novo campo
   image_url: z.string().optional().or(z.literal("")),
 })
 
@@ -56,6 +58,7 @@ export function ProductForm({ product }: ProductFormProps) {
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false)
   const [newCategoryName, setNewCategoryName] = useState("")
   const [isCreatingCategory, setIsCreatingCategory] = useState(false)
+  const [categoryManagementOpen, setCategoryManagementOpen] = useState(false) // Estado para o novo diálogo
   const supabase = createClient()
 
   const {
@@ -68,6 +71,8 @@ export function ProductForm({ product }: ProductFormProps) {
     resolver: zodResolver(productSchema),
     defaultValues: product || {
       category: "",
+      units_per_package: null, // Definir como null por padrão
+      price: null, // Definir como null por padrão
     },
   })
 
@@ -187,6 +192,8 @@ export function ProductForm({ product }: ProductFormProps) {
       const productData = {
         ...data,
         category: categoryName, // Submit category name instead of UUID
+        price: data.price === null ? null : data.price, // Ensure null if empty
+        units_per_package: data.units_per_package === null ? null : data.units_per_package, // Ensure null if empty
       }
 
       console.log("[v0] Submitting product data:", productData)
@@ -307,6 +314,16 @@ export function ProductForm({ product }: ProductFormProps) {
             >
               <Plus className="size-4" />
             </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => setCategoryManagementOpen(true)} // Botão para abrir o gerenciamento de categorias
+              title="Gerenciar categorias"
+              className="shrink-0"
+            >
+              <Settings className="size-4" />
+            </Button>
           </div>
           {errors.category && <p className="text-sm text-red-600">{errors.category.message}</p>}
         </div>
@@ -326,21 +343,33 @@ export function ProductForm({ product }: ProductFormProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="weight">Peso/Tamanho</Label>
+            <Label htmlFor="weight">Peso/Tamanho (Opcional)</Label>
             <Input id="weight" placeholder="Ex: 500g, 1kg" {...register("weight")} />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="price">Preço (R$)</Label>
+            <Label htmlFor="units_per_package">Unidades por Embalagem (Opcional)</Label>
             <Input
-              id="price"
+              id="units_per_package"
               type="number"
-              step="0.01"
-              placeholder="14.90"
-              {...register("price", { valueAsNumber: true })}
+              step="1"
+              placeholder="Ex: 12, 24"
+              {...register("units_per_package", { valueAsNumber: true })}
             />
-            {errors.price && <p className="text-sm text-red-600">{errors.price.message}</p>}
+            {errors.units_per_package && <p className="text-sm text-red-600">{errors.units_per_package.message}</p>}
           </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="price">Preço (R$) (Opcional)</Label>
+          <Input
+            id="price"
+            type="number"
+            step="0.01"
+            placeholder="14.90"
+            {...register("price", { valueAsNumber: true })}
+          />
+          {errors.price && <p className="text-sm text-red-600">{errors.price.message}</p>}
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
@@ -422,6 +451,12 @@ export function ProductForm({ product }: ProductFormProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <CategoryManagementDialog
+        open={categoryManagementOpen}
+        onOpenChange={setCategoryManagementOpen}
+        onCategoryChange={fetchCategories} // Para atualizar a lista de categorias no ProductForm
+      />
     </>
   )
 }

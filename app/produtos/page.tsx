@@ -6,12 +6,12 @@ import { Button } from "@/components/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { createClient } from "@/lib/supabase/client"
-import { Package, ShoppingCart, Minus, Plus } from "lucide-react" // Adicionado Minus e Plus
+import { Package, ShoppingCart, Minus, Plus } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useCart } from "@/components/cart-provider"
-import { Input } from "@/components/ui/input" // Importar Input
+import { Input } from "@/components/ui/input"
 
 interface Product {
   id: string
@@ -23,6 +23,7 @@ interface Product {
   price?: number
   image_url?: string
   is_featured?: boolean
+  units_per_package?: number // Adicionado
   created_at: string
 }
 
@@ -140,6 +141,12 @@ export default function ProductsPage() {
                             <p className="text-sm text-muted-foreground">{product.weight}</p>
                           </div>
                         )}
+                        {product.units_per_package !== null && product.units_per_package !== undefined && (
+                          <div>
+                            <p className="text-sm font-medium text-foreground mb-1">Unidades por Embalagem:</p>
+                            <p className="text-sm text-muted-foreground">{product.units_per_package}</p>
+                          </div>
+                        )}
                         {/* Seletor de Quantidade */}
                         <div className="flex items-center gap-2 mt-4">
                           <Button
@@ -172,6 +179,7 @@ export default function ProductsPage() {
                             name: product.name,
                             image_url: product.image_url,
                             weight: product.weight,
+                            units_per_package: product.units_per_package, // Passa o novo campo
                           }, quantities[product.id])} // Passa a quantidade selecionada
                         >
                           <ShoppingCart className="size-4 mr-2" /> Adicionar ao Carrinho

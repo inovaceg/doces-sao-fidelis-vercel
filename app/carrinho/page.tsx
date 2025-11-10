@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { useCart } from "@/components/cart-provider"
 import Link from "next/link"
 import Image from "next/image"
-import { Trash2, Minus, Plus, ShoppingCart, Package } from "lucide-react" // Adicionado ShoppingCart e Package
+import { Trash2, Minus, Plus, ShoppingCart, Package } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export default function CartPage() {
@@ -16,7 +16,6 @@ export default function CartPage() {
   const router = useRouter()
 
   const handleCheckout = () => {
-    // Redireciona para a página de checkout
     router.push("/checkout")
   }
 
@@ -67,6 +66,9 @@ export default function CartPage() {
                         <CardTitle className="text-lg">{item.name}</CardTitle>
                         {item.weight && (
                           <p className="text-sm text-muted-foreground mt-1">Peso: {item.weight}</p>
+                        )}
+                        {item.units_per_package !== null && item.units_per_package !== undefined && (
+                          <p className="text-sm text-muted-foreground mt-1">Unidades por Embalagem: {item.units_per_package}</p>
                         )}
                         <div className="flex items-center gap-2 mt-3">
                           <Button
