@@ -19,8 +19,8 @@ const contactFormSchema = z.object({
   phone: z.string().min(10, "Telefone inválido"),
   cep: z.string().min(8, "CEP inválido").max(9, "CEP inválido"), // Novo campo CEP
   address: z.string().optional().or(z.literal("")), // Rua/Avenida do CEP
-  number: z.string().optional().or(z.literal("")), // Número da residência/comércio
-  complement: z.string().optional().or(z.literal("")), // Complemento
+  // number: z.string().optional().or(z.literal("")), // Removido
+  // complement: z.string().optional().or(z.literal("")), // Removido
   neighborhood: z.string().optional().or(z.literal("")), // Bairro do CEP
   city: z.string().optional().or(z.literal("")), // Cidade do CEP
   state: z.string().min(2, "Estado inválido").max(2, "Estado inválido").optional().or(z.literal("")), // Estado do CEP
@@ -73,7 +73,7 @@ export function ContactForm() {
             setValue("neighborhood", data.bairro)
             setValue("city", data.localidade)
             setValue("state", data.uf)
-            setValue("complement", data.complemento || "") // Preenche complemento se disponível
+            // setValue("complement", data.complemento || "") // Removido
             toast.success("Endereço preenchido automaticamente!")
           } else {
             toast.error("CEP não encontrado. Por favor, digite o endereço manualmente.")
@@ -82,7 +82,7 @@ export function ContactForm() {
             setValue("neighborhood", "")
             setValue("city", "")
             setValue("state", "")
-            setValue("complement", "")
+            // setValue("complement", "") // Removido
           }
         } catch (error) {
           console.error("Erro ao buscar CEP:", error)
@@ -99,7 +99,8 @@ export function ContactForm() {
 
     try {
       // Constrói o endereço completo para enviar ao banco de dados
-      const fullAddress = [data.address, data.number, data.complement, data.neighborhood].filter(Boolean).join(', ');
+      // Removido data.number e data.complement da construção do fullAddress
+      const fullAddress = [data.address, data.neighborhood].filter(Boolean).join(', ');
 
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -112,6 +113,8 @@ export function ContactForm() {
           address: fullAddress, // Envia o endereço completo
           city: data.city,
           state: data.state,
+          product_interest: null, // Removido do formulário, enviar null
+          quantity: null, // Removido do formulário, enviar null
           message: data.message,
         }),
       })
@@ -173,6 +176,8 @@ export function ContactForm() {
         {errors.address && <p className="text-sm text-destructive">{errors.address.message}</p>}
       </div>
 
+      {/* Campos 'number' e 'complement' removidos */}
+      {/*
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="number">Número</Label>
@@ -184,6 +189,7 @@ export function ContactForm() {
           <Input id="complement" placeholder="Apto 101, Bloco B" {...register("complement")} />
         </div>
       </div>
+      */}
 
       <div className="space-y-2">
         <Label htmlFor="neighborhood">Bairro</Label>
@@ -203,8 +209,6 @@ export function ContactForm() {
           {errors.state && <p className="text-sm text-destructive">{errors.state.message}</p>}
         </div>
       </div>
-
-      {/* Campos 'productInterest' e 'quantity' removidos */}
 
       <div className="space-y-2">
         <Label htmlFor="message">Mensagem *</Label>
