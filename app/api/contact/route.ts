@@ -6,30 +6,32 @@ export async function POST(request: Request) {
     const data = await request.json()
     const supabase = await createClient()
 
-    // Inserir na tabela quote_requests (agora usada para mensagens de contato também)
-    const { error } = await supabase.from("quote_requests").insert([
-      {
-        company_name: data.company_name || null, // Pode ser nulo
-        contact_name: data.contact_name,
-        email: data.email,
-        phone: data.phone,
-        address: data.address, // Endereço completo construído no frontend
-        city: data.city,
-        state: data.state,
-        product_interest: null, // Removido do formulário, enviar null
-        quantity: null, // Removido do formulário, enviar null
-        message: data.message,
-      },
-    ])
+    // Extrair e preparar os dados, convertendo strings vazias para null para campos opcionais
+    const payload = {
+      company_name: data.companyName || null, // Converte "" para null
+      contact_name: data.contactName,
+      email: data.email,
+      phone: data.phone,
+      address: data.address || null, // Converte "" para null
+      city: data.city || null,       // Converte "" para null
+      state: data.state || null,     // Converte "" para null
+      product_interest: null, // Este campo é sempre null para o formulário de contato
+      quantity: null,         // Este campo é sempre null para o formulário de contato
+      message: data.message,  // 'message' é obrigatório no formulário, então não será ""
+    };
+
+    // Inserir na tabela quote_requests
+    const { error } = await supabase.from("quote_requests").insert([payload])
 
     if (error) {
       console.error("Error saving contact message:", error)
-      return NextResponse.json({ error: "Erro ao salvar mensagem de contato" }, { status: 500 })
+      // Retorna a mensagem de erro específica do Supabase para o cliente para melhor depuração
+      return NextResponse.json({ error: error.message || "Erro ao salvar mensagem de contato" }, { status: 500 })
     }
 
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch (error: any) { // Explicitly type error as any for easier access to message
     console.error("Error in contact API:", error)
-    return NextResponse.json({ error: "Erro ao processar solicitação" }, { status: 500 })
+    return NextResponse.json({ error: error.message || "Erro ao processar solicitação" }, { status: 500 })
   }
 }
