@@ -20,7 +20,7 @@ const checkoutSchema = z.object({
   fullName: z.string().min(3, "Nome completo deve ter no mínimo 3 caracteres"),
   email: z.string().email("E-mail inválido"),
   phone: z.string().min(14, "Telefone/WhatsApp inválido (ex: 22-9-8888-8888)").max(14, "Telefone/WhatsApp inválido (ex: 22-9-8888-8888)"), // Atualizado para 14 caracteres
-  cep: z.string().min(8, "CEP inválido").max(9, "CEP inválido"),
+  cep: z.string().min(9, "CEP inválido (ex: 00000-000)").max(9, "CEP inválido (ex: 00000-000)"), // Atualizado para 9 caracteres
   address: z.string().min(3, "Endereço inválido"),
   number: z.string().min(1, "Número é obrigatório"),
   complement: z.string().optional(),
@@ -129,6 +129,21 @@ export function CheckoutForm() {
     setValue('phone', formattedValue, { shouldValidate: true });
   };
 
+  // Função para mascarar o CEP
+  const handleCepInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    let cleanedValue = value.replace(/\D/g, ''); // Remove caracteres não numéricos
+
+    let formattedValue = '';
+    if (cleanedValue.length > 0) {
+      formattedValue = cleanedValue.substring(0, 5); // XXXXX
+      if (cleanedValue.length > 5) {
+        formattedValue += '-' + cleanedValue.substring(5, 8); // XXX
+      }
+    }
+    setValue('cep', formattedValue, { shouldValidate: true });
+  };
+
   const onSubmit = async (data: CheckoutFormData) => {
     setIsSubmitting(true)
 
@@ -235,7 +250,14 @@ export function CheckoutForm() {
 
       <div className="space-y-2">
         <Label htmlFor="cep">CEP *</Label>
-        <Input id="cep" placeholder="00000-000" {...register("cep")} aria-invalid={!!errors.cep} maxLength={9} />
+        <Input
+          id="cep"
+          placeholder="00000-000"
+          {...register("cep")}
+          onChange={handleCepInputChange} // Usando a função de mascaramento
+          aria-invalid={!!errors.cep}
+          maxLength={9} // Definindo o comprimento máximo para o formato mascarado
+        />
         {errors.cep && <p className="text-sm text-destructive">{errors.cep.message}</p>}
       </div>
 
