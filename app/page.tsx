@@ -92,10 +92,8 @@ export default async function HomePage() {
               <div className="flex flex-wrap gap-3 justify-center">
                 <Button asChild size="default" className="rounded-full">
                   <Link href="/produtos">
-                    <span>
-                      Veja Nosso Catálogo
-                      <ArrowRight />
-                    </span>
+                    Veja Nosso Catálogo
+                    <ArrowRight />
                   </Link>
                 </Button>
                 <Button
@@ -262,10 +260,8 @@ export default async function HomePage() {
             <div className="text-center mt-12">
               <Button asChild size="lg">
                 <Link href="/produtos">
-                  <span>
-                    Ver Todos os Produtos
-                    <ArrowRight />
-                  </span>
+                  Ver Todos os Produtos
+                  <ArrowRight />
                 </Link>
               </Button>
             </div>
