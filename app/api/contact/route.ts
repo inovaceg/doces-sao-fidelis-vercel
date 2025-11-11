@@ -8,19 +8,19 @@ export async function POST(request: Request) {
 
     const supabase = await createClient()
 
-    // Extrair e preparar os dados, convertendo strings vazias para null para campos opcionais
-    // E garantindo que campos NOT NULL sejam sempre strings (mesmo que vazias, se não preenchidas)
+    // Extrair e preparar os dados, garantindo que campos NOT NULL sejam strings
+    // e campos NULLABLE sejam null se vazios
     const payload = {
-      company_name: data.companyName || null,
-      contact_name: data.contactName || "", // Garante que não é null
-      email: data.email || "",             // Garante que não é null
-      phone: data.phone || "",             // Garante que não é null
-      address: data.address || null,
-      city: data.city || null,
-      state: data.state || null,
-      product_interest: null,
-      quantity: null,
-      message: data.message || "",         // Garante que não é null
+      company_name: (data.companyName && data.companyName.trim() !== '') ? data.companyName.trim() : null,
+      contact_name: data.contactName ? data.contactName.trim() : '', // NOT NULL: Garante string, mesmo que vazia
+      email: data.email ? data.email.trim() : '',                   // NOT NULL: Garante string, mesmo que vazia
+      phone: data.phone ? data.phone.trim() : '',                   // NOT NULL: Garante string, mesmo que vazia
+      address: (data.address && data.address.trim() !== '') ? data.address.trim() : null,
+      city: (data.city && data.city.trim() !== '') ? data.city.trim() : null,
+      state: (data.state && data.state.trim() !== '') ? data.state.trim() : null,
+      product_interest: null, // Este campo é sempre null para o formulário de contato
+      quantity: null,         // Este campo é sempre null para o formulário de contato
+      message: data.message ? data.message.trim() : '',             // NOT NULL: Garante string, mesmo que vazia
     };
 
     console.log("[API Contact] Payload being sent to Supabase:", payload); // Log do payload para depuração
