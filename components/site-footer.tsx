@@ -10,7 +10,7 @@ export function SiteFooter() {
           <div className="space-y-4">
             <div className="relative w-[120px] h-[120px] mb-4"> {/* Contêiner para a imagem */}
               <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Design%20sem%20nome%20%281%29%20%281%29-vqBz106SPSsejO2YFogjWyruHk8EV4.png"
+                src="/logo-doces-sao-fidelis.png"
                 alt="Doces São Fidélis"
                 fill // Usar fill para preencher o contêiner
                 className="object-contain" // Manter a proporção dentro do contêiner

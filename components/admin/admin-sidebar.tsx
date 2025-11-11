@@ -54,7 +54,7 @@ export function AdminSidebar() {
           <div className="flex items-center gap-3">
             <div className="relative size-10">
               <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Design%20sem%20nome%20%281%29%20%281%29-vqBz106SPSsejO2YFogjWyruHk8EV4.png"
+                src="/logo-doces-sao-fidelis.png"
                 alt="Doces São Fidélis"
                 fill
                 className="object-contain"
