@@ -1,10 +1,10 @@
 import React from "react"
 import type { Metadata } from "next"
 import { Playfair_Display, Inter } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
-import { Toaster } from "sonner"
+// import { Analytics } from "@vercel/analytics/next" // Removido temporariamente
+// import { Toaster } from "sonner" // Removido temporariamente
 import "./globals.css"
-import { CartProvider } from "@/components/cart-provider" // Importar CartProvider
+// import { CartProvider } from "@/components/cart-provider" // Removido temporariamente
 
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" })
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
@@ -40,13 +40,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
-        <CartProvider> {/* Envolvendo a aplicação com CartProvider */}
-          <React.Fragment> {/* Adicionado React.Fragment para envolver múltiplos filhos */}
-            {children}
-            <Toaster position="top-center" />
-            <Analytics />
-          </React.Fragment>
-        </CartProvider>
+        {children}
       </body>
     </html>
   )
