@@ -36,6 +36,7 @@ export default async function HomePage() {
     .eq("is_active", true)
     .order("display_order", { ascending: true })
     .order("created_at", { ascending: false })
+    .limit(8) // Adicionado limite de 8 produtos
 
   if (productsError) {
     console.error("Error fetching featured products:", productsError)
