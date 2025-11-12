@@ -4,21 +4,31 @@ import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Search, Eye, Trash2 } from "lucide-react"
 import { toast } from "sonner"
+import { QuoteDetailsDialog } from "@/components/admin/quote-details-dialog" // Importar o diálogo de detalhes
+import { ScrollArea } from "@/components/ui/scroll-area" // Importar ScrollArea para a tabela
+import { formatPhoneNumber } from "@/lib/utils" // Importar a função de formatação
 
 interface ContactMessage {
-  id: number
-  name: string
+  id: string // UUID
+  company_name: string | null
+  contact_name: string
   email: string
-  phone: string // Adicionado phone, que existe na tabela contact_forms
-  message: string
+  phone: string
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  product_interest?: string | null // Será null para mensagens de contato gerais
+  quantity?: string | null // Será null para mensagens de contato gerais
+  message: string | null
   created_at: string
-  // is_read: boolean // Removido, pois não existe na tabela contact_forms
 }
 
 export default function AdminMessagesPage() {
   const [messages, setMessages] = useState<ContactMessage[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [loading, setLoading] = useState(true)
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false) // Estado para o diálogo de detalhes
+  const [selectedQuote, setSelectedQuote] = useState<ContactMessage | null>(null) // Estado para a mensagem selecionada
   const supabase = createClient()
 
   useEffect(() => {
@@ -26,29 +36,25 @@ export default function AdminMessagesPage() {
   }, [])
 
   const fetchMessages = async () => {
-    // Alterado de contact_messages para contact_forms
-    const { data } = await supabase.from("contact_forms").select("*").order("created_at", { ascending: false })
-    setMessages(data || [])
+    setLoading(true)
+    // Alterado de contact_forms para quote_requests
+    const { data, error } = await supabase.from("quote_requests").select("*").order("created_at", { ascending: false })
+    
+    if (error) {
+      console.error("Erro ao buscar mensagens de contato do Supabase:", error);
+      toast.error("Erro ao carregar mensagens de contato.");
+      setMessages([]);
+    } else {
+      setMessages(data || [])
+    }
     setLoading(false)
   }
 
-  // Função toggleRead removida, pois a coluna is_read não existe na tabela contact_forms
-  // const toggleRead = async (id: number, currentStatus: boolean) => {
-  //   const { error } = await supabase.from("contact_messages").update({ is_read: !currentStatus }).eq("id", id)
-
-  //   if (error) {
-  //     toast.error("Erro ao atualizar status")
-  //   } else {
-  //     fetchMessages()
-  //     toast.success("Status atualizado")
-  //   }
-  // }
-
-  const deleteMessage = async (id: number) => {
+  const deleteMessage = async (id: string) => {
     if (!confirm("Deseja realmente excluir esta mensagem?")) return
 
-    // Alterado de contact_messages para contact_forms
-    const { error } = await supabase.from("contact_forms").delete().eq("id", id)
+    // Alterado de contact_forms para quote_requests
+    const { error } = await supabase.from("quote_requests").delete().eq("id", id)
 
     if (error) {
       toast.error("Erro ao excluir mensagem")
@@ -58,18 +64,23 @@ export default function AdminMessagesPage() {
     }
   }
 
+  const handleViewDetails = (message: ContactMessage) => {
+    setSelectedQuote(message)
+    setIsDetailsDialogOpen(true)
+  }
+
   const filteredMessages = messages.filter(
     (msg) =>
-      msg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (msg.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      msg.contact_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       msg.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      // msg.subject.toLowerCase().includes(searchTerm.toLowerCase()) || // Removido
-      msg.message.toLowerCase().includes(searchTerm.toLowerCase()),
+      msg.message?.toLowerCase().includes(searchTerm.toLowerCase())),
   )
 
   if (loading) {
     return (
       <main className="p-8">
-        <div className="text-center py-12">Carregando...</div>
+        <div className="text-center py-12">Carregando mensagens...</div>
       </main>
     )
   }
@@ -85,7 +96,7 @@ export default function AdminMessagesPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Filtrar por nome, e-mail ou mensagem..." // Texto do placeholder atualizado
+              placeholder="Filtrar por empresa, contato, e-mail ou mensagem..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff8800]"
@@ -94,77 +105,70 @@ export default function AdminMessagesPage() {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th> */} {/* Removido */}
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  E-mail
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Telefone
-                </th> {/* Adicionado */}
-                {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Assunto
-                </th> */} {/* Removido */}
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredMessages.map((message) => (
-                <tr key={message.id} className="hover:bg-gray-50">
-                  {/* <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => toggleRead(message.id, message.is_read)}
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        message.is_read ? "bg-[#4a4a4a] text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                      }`}
-                    >
-                      {message.is_read ? "Lida" : "Nova"}
-                    </button>
-                  </td> */} {/* Removido */}
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{message.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{message.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{message.phone}</td> {/* Adicionado */}
-                  {/* <td className="px-6 py-4 text-sm text-[#4a4a4a]">{message.subject}</td> */} {/* Removido */}
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(message.created_at).toLocaleString("pt-BR")}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => alert(`Mensagem:\n\n${message.message}`)}
-                        className="text-gray-600 hover:text-[#ff8800]"
-                        title="Ver mensagem"
-                      >
-                        <Eye className="size-4" />
-                      </button>
-                      <button
-                        onClick={() => deleteMessage(message.id)}
-                        className="text-gray-600 hover:text-red-600"
-                        title="Excluir"
-                      >
-                        <Trash2 className="size-4" />
-                      </button>
-                    </div>
-                  </td>
+        <ScrollArea className="h-[calc(100vh-250px)]">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Empresa</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contato</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    E-mail
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Telefone
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ações
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredMessages.map((message) => (
+                  <tr key={message.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a] font-medium">{message.company_name || "-"}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{message.contact_name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{message.email}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4a4a4a]">{formatPhoneNumber(message.phone)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Date(message.created_at).toLocaleString("pt-BR")}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleViewDetails(message)}
+                          className="text-gray-600 hover:text-[#ff8800]"
+                          title="Ver detalhes"
+                        >
+                          <Eye className="size-4" />
+                        </button>
+                        <button
+                          onClick={() => deleteMessage(message.id)}
+                          className="text-gray-600 hover:text-red-600"
+                          title="Excluir"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-          {filteredMessages.length === 0 && (
-            <div className="text-center py-12 text-gray-500">Nenhuma mensagem encontrada</div>
-          )}
-        </div>
+            {filteredMessages.length === 0 && (
+              <div className="text-center py-12 text-gray-500">Nenhuma mensagem encontrada</div>
+            )}
+          </div>
+        </ScrollArea>
       </div>
+
+      <QuoteDetailsDialog
+        open={isDetailsDialogOpen}
+        onOpenChange={setIsDetailsDialogOpen}
+        quote={selectedQuote}
+      />
     </main>
   )
 }
