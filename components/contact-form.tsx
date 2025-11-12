@@ -167,13 +167,13 @@ export function ContactForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="companyName">Nome da Empresa (Opcional)</Label>
-        <Input id="companyName" placeholder="Nome da sua empresa" {...register("companyName")} aria-invalid={!!errors.companyName} />
+        <Input id="companyName" placeholder="Nome da sua empresa" {...register("companyName")} aria-invalid={!!errors.companyName} className="bg-white text-foreground" />
         {errors.companyName && <p className="text-sm text-destructive">{errors.companyName.message}</p>}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="contactName">Nome do Contato *</Label>
-        <Input id="contactName" placeholder="Seu nome completo" {...register("contactName")} aria-invalid={!!errors.contactName} />
+        <Input id="contactName" placeholder="Seu nome completo" {...register("contactName")} aria-invalid={!!errors.contactName} className="bg-white text-foreground" />
         {errors.contactName && <p className="text-sm text-destructive">{errors.contactName.message}</p>}
       </div>
 
@@ -186,6 +186,7 @@ export function ContactForm() {
             placeholder="seu@email.com"
             {...register("email")}
             aria-invalid={!!errors.email}
+            className="bg-white text-foreground"
           />
           {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
         </div>
@@ -199,6 +200,7 @@ export function ContactForm() {
             onChange={handlePhoneInputChange} // Usando a função de mascaramento
             aria-invalid={!!errors.phone}
             maxLength={14} // Definindo o comprimento máximo para o formato mascarado
+            className="bg-white text-foreground"
           />
           {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
         </div>
@@ -213,31 +215,32 @@ export function ContactForm() {
           onChange={handleCepInputChange} // Usando a função de mascaramento
           aria-invalid={!!errors.cep}
           maxLength={9} // Definindo o comprimento máximo para o formato mascarado
+          className="bg-white text-foreground"
         />
         {errors.cep && <p className="text-sm text-destructive">{errors.cep.message}</p>}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="address">Endereço (Rua, Avenida, etc.)</Label>
-        <Input id="address" placeholder="Rua, Avenida, etc." {...register("address")} aria-invalid={!!errors.address} />
+        <Input id="address" placeholder="Rua, Avenida, etc." {...register("address")} aria-invalid={!!errors.address} className="bg-white text-foreground" />
         {errors.address && <p className="text-sm text-destructive">{errors.address.message}</p>}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="neighborhood">Bairro</Label>
-        <Input id="neighborhood" placeholder="Seu bairro" {...register("neighborhood")} aria-invalid={!!errors.neighborhood} />
+        <Input id="neighborhood" placeholder="Seu bairro" {...register("neighborhood")} aria-invalid={!!errors.neighborhood} className="bg-white text-foreground" />
         {errors.neighborhood && <p className="text-sm text-destructive">{errors.neighborhood.message}</p>}
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="city">Cidade</Label>
-          <Input id="city" placeholder="Sua cidade" {...register("city")} aria-invalid={!!errors.city} />
+          <Input id="city" placeholder="Sua cidade" {...register("city")} aria-invalid={!!errors.city} className="bg-white text-foreground" />
           {errors.city && <p className="text-sm text-destructive">{errors.city.message}</p>}
         </div>
         <div className="space-y-2">
           <Label htmlFor="state">Estado (UF)</Label>
-          <Input id="state" placeholder="RJ" {...register("state")} aria-invalid={!!errors.state} maxLength={2} />
+          <Input id="state" placeholder="RJ" {...register("state")} aria-invalid={!!errors.state} maxLength={2} className="bg-white text-foreground" />
           {errors.state && <p className="text-sm text-destructive">{errors.state.message}</p>}
         </div>
       </div>
@@ -250,6 +253,7 @@ export function ContactForm() {
           rows={6}
           {...register("message")}
           aria-invalid={!!errors.message}
+          className="bg-white text-foreground"
         />
         {errors.message && <p className="text-sm text-destructive">{errors.message.message}</p>}
       </div>
