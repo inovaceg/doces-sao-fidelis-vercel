@@ -269,15 +269,15 @@ export default function OurHistoryPage() {
                 Conheça nossos produtos e descubra por que somos referência em doces artesanais há mais de 20 anos.
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
-                <Button asChild size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+                <Button asChild size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 rounded-full">
                   <Link href="/produtos"><span>Ver Produtos</span></Link>
                 </Button>
-                {/* Corrigindo o segundo botão para ser visível (borda e texto brancos, fundo transparente) */}
+                {/* Adicionando rounded-full ao botão Fale Conosco */}
                 <Button 
                   asChild 
                   variant="outline" 
                   size="lg" 
-                  className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10"
+                  className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 rounded-full"
                 >
                   <Link href="/contato"><span>Fale Conosco</span></Link>
                 </Button>
