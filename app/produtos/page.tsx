@@ -188,9 +188,7 @@ export default function ProductsPage() {
                             units_per_package: product.units_per_package, // Passa o novo campo
                           }, quantities[product.id])} // Passa a quantidade selecionada
                         >
-                          <span>
-                            <ShoppingCart className="size-4 mr-2" /> Adicionar ao Orçamento
-                          </span>
+                          Adicionar ao Orçamento <ShoppingCart className="size-4 ml-2" />
                         </Button>
                       </div>
                     </CardContent>
