@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       state: (data.state && data.state.trim() !== '') ? data.state.trim() : null,
       product_interest: null, // Este campo é sempre null para o formulário de contato
       quantity: null,         // Este campo é sempre null para o formulário de contato
-      message: data.message ? data.message.trim() : '',             // NOT NULL: Garante string, mesmo que vazia
+      message: (data.message && data.message.trim() !== '') ? data.message.trim() : null, // Alterado para enviar null se vazio
     };
 
     console.log("[API Contact] Payload being sent to Supabase:", payload); // Log do payload para depuração
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true })
-  } catch (error: any) {
+  } catch (error: any) { // Explicitly type error as any for easier access to message
     console.error("[API Contact] Unexpected error in contact API:", error)
     return NextResponse.json({ error: error.message || "Erro ao processar solicitação" }, { status: 500 })
   }
