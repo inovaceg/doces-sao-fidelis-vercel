@@ -237,8 +237,10 @@ export default function OurHistoryPage() {
                 </p>
               </div>
               <div className="pt-6">
-                <Button asChild size="lg" variant="default"> {/* Alterado para variant="default" */}
-                  <Link href="/contato">Entre em Contato para Visitas</Link>
+                <Button asChild size="lg" variant="default">
+                  <Link href="/contato">
+                    <span>Entre em Contato para Visitas</span>
+                  </Link>
                 </Button>
               </div>
             </div>
