@@ -119,7 +119,7 @@ export default async function HomePage() {
             <div className="max-w-4xl mx-auto text-center space-y-6">
               <h2 className="font-serif text-3xl lg:text-5xl font-bold text-foreground">Nossa História e Missão</h2>
               <p className="text-lg text-muted-foreground text-pretty">
-                A Doces São Fidelis nasceu em outubro de 2000, movida por um sonho: levar doces artesanais de qualidade a todo o Brasil. Após duas décadas de experiência no setor, Roberto Porto investiu em um novo empreendimento, focado em bananadas e gomas de amido de qualidade superior, sabor autêntico e custo acessível.
+                A Doces São Fidelis nasceu em outubro de 2000, movida por um sonho: levar doces artesanais de qualidade a todo o Brasil. Após duas décadas de experiência no setor, Roberto Porto, apaixonado pelas tradicionais mariolas desde sua infância, percebeu que havia uma lacuna no mercado: a falta de uma bananada que combinasse qualidade superior, sabor autêntico a cada mordida e um custo acessível. Com isso, decidiu investir todas as suas economias em um novo empreendimento. O início foi em uma pequena cozinha no bairro Nova Divinéia, em São Fidélis/RJ, com uma equipe reduzida, focada na produção do nosso principal produto: a bananada.
               </p>
               <Button asChild variant="link" className="text-primary hover:underline">
                 <Link href="/nossa-historia">
