@@ -2,7 +2,7 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { Button } from "@/components/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Calendar, Heart, Users, Trophy } from "lucide-react"
+import { Calendar, Heart, Users, Trophy, MapPin } from "lucide-react"
 import Link from "next/link"
 
 export default function OurHistoryPage() {
@@ -16,7 +16,7 @@ export default function OurHistoryPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl">
               <h1 className="font-serif text-4xl lg:text-6xl font-bold mb-6 text-balance">
-                Nossa História
+                Doces São Fidélis: Tradição e Qualidade Desde 2000
               </h1>
               <p className="text-lg text-pretty">
                 Uma jornada de mais de duas décadas dedicada à produção de doces artesanais de qualidade superior.
@@ -25,13 +25,13 @@ export default function OurHistoryPage() {
           </div>
         </section>
 
-        {/* Story Section */}
+        {/* Story Section - Início */}
         <section className="py-16 lg:py-24">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
                 <img
-                  src="/artisanal-banana-candy-bananadas-on-wooden-table.jpg"
+                  src="/traditional-banana-candy-bananada.jpg"
                   alt="Produção artesanal de bananadas"
                   className="object-cover w-full h-full"
                 />
@@ -39,22 +39,20 @@ export default function OurHistoryPage() {
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
                   <Calendar className="size-4" />
-                  Desde 2000
+                  Outubro de 2000
                 </div>
-                <h2 className="font-serif text-3xl lg:text-4xl font-bold text-foreground">Como Tudo Começou</h2>
+                <h2 className="font-serif text-3xl lg:text-4xl font-bold text-foreground">
+                  Uma Jornada de Sabor e Tradição
+                </h2>
                 <div className="space-y-4 text-muted-foreground">
                   <p>
-                    A Doces São Fidélis nasceu no ano 2000, na cidade de São Fidélis, Rio de Janeiro, com o sonho de
-                    preservar as receitas tradicionais de bananadas e gomas de amido que faziam parte da cultura local
-                    há gerações.
+                    Após duas décadas de experiência no setor de doces e confeitos, Roberto Porto, apaixonado pelas tradicionais mariolas desde sua infância, percebeu uma lacuna no mercado: a falta de uma bananada que combinasse qualidade superior, sabor autêntico e um custo acessível.
                   </p>
                   <p>
-                    O que começou como uma pequena produção familiar rapidamente ganhou reconhecimento pela qualidade
-                    excepcional dos produtos e pelo sabor autêntico que conquistava a todos que experimentavam.
+                    Com esse sonho, investiu todas as suas economias e, em outubro de 2000, nascia a Doces São Fidelis. O início foi em uma pequena cozinha no bairro Nova Divinéia, em São Fidélis/RJ, com uma equipe reduzida, focada na produção do nosso principal produto: a bananada.
                   </p>
                   <p>
-                    Mantendo a tradição artesanal e utilizando apenas ingredientes naturais selecionados, crescemos e
-                    nos tornamos referência em doces de qualidade, sem nunca perder nossa essência.
+                    A seleção rigorosa das melhores bananas, o cuidado especial na adição de cada ingrediente e a atenção minuciosa em cada etapa do processo refletiam-se na qualidade única dos nossos doces.
                   </p>
                 </div>
               </div>
@@ -62,8 +60,39 @@ export default function OurHistoryPage() {
           </div>
         </section>
 
-        {/* Values Section */}
+        {/* Story Section - Expansão e Excelência */}
         <section className="py-16 lg:py-24 bg-secondary">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6">
+                <h2 className="font-serif text-3xl lg:text-4xl font-bold text-foreground">
+                  Expansão e Compromisso com a Excelência
+                </h2>
+                <div className="space-y-4 text-muted-foreground">
+                  <p>
+                    Após o primeiro ano de operação, a crescente demanda exigiu uma expansão. As obras para a construção de uma fábrica começaram, e com a nova estrutura, conseguimos aumentar consideravelmente a produção da bananada e expandir nosso portfólio, com destaque para nossas deliciosas gomas de amido.
+                  </p>
+                  <p>
+                    Desde o início, nosso compromisso tem sido com a excelência em cada detalhe. Nosso rigoroso padrão de qualidade, aliado a uma logística eficiente, tem nos permitido conquistar a confiança de clientes e parceiros e levar nossos doces para dentro de inúmeros lares.
+                  </p>
+                  <p>
+                    Atualmente, contamos com cerca de 50 colaboradores que, com muito orgulho, são parte fundamental da nossa história. Mais do que produzir doces, preservamos memórias e criamos momentos de felicidade.
+                  </p>
+                </div>
+              </div>
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
+                <img
+                  src="/assorted-fruit-starch-gummies-colorful.jpg"
+                  alt="Gomas de amido coloridas"
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Values Section (Mantido) */}
+        <section className="py-16 lg:py-24">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center space-y-4 mb-16">
               <h2 className="font-serif text-3xl lg:text-5xl font-bold text-foreground">Nossos Valores</h2>
@@ -102,9 +131,9 @@ export default function OurHistoryPage() {
                   <div className="inline-flex items-center justify-center size-16 rounded-full bg-primary/10">
                     <Users className="size-8 text-primary" />
                   </div>
-                  <h3 className="font-serif text-xl font-bold text-foreground">Tradição</h3>
+                  <h3 className="font-serif text-xl font-bold text-foreground">Tradição Familiar</h3>
                   <p className="text-sm text-muted-foreground">
-                    Preservamos receitas e métodos tradicionais que atravessam gerações
+                    Após 25 anos, permanecemos fiéis às nossas raízes como uma empresa familiar.
                   </p>
                 </CardContent>
               </Card>
@@ -125,7 +154,7 @@ export default function OurHistoryPage() {
         </section>
 
         {/* Timeline Section */}
-        <section className="py-16 lg:py-24">
+        <section className="py-16 lg:py-24 bg-secondary">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center space-y-4 mb-16">
               <h2 className="font-serif text-3xl lg:text-5xl font-bold text-foreground">Nossa Trajetória</h2>
@@ -135,33 +164,23 @@ export default function OurHistoryPage() {
               {[
                 {
                   year: "2000",
-                  title: "Fundação",
-                  description: "Início da produção artesanal de bananadas e gomas em São Fidélis, RJ",
+                  title: "Fundação e Sonho",
+                  description: "Nascimento da Doces São Fidelis em outubro, com o sonho de Roberto Porto de levar bananadas de qualidade superior ao mercado.",
                 },
                 {
-                  year: "2005",
-                  title: "Expansão",
-                  description: "Ampliação da linha de produtos e início das vendas para outras cidades",
+                  year: "2001",
+                  title: "Expansão da Produção",
+                  description: "A crescente demanda exige a construção de uma fábrica maior, permitindo o aumento da produção e a expansão do portfólio com gomas de amido.",
                 },
                 {
                   year: "2010",
-                  title: "Reconhecimento",
-                  description: "Conquistamos o reconhecimento regional pela qualidade dos nossos produtos",
-                },
-                {
-                  year: "2015",
-                  title: "Modernização",
-                  description: "Investimento em equipamentos mantendo os processos artesanais",
-                },
-                {
-                  year: "2020",
-                  title: "Crescimento",
-                  description: "Expansão da capacidade produtiva e novos canais de distribuição",
+                  title: "Reconhecimento Regional",
+                  description: "Conquistamos o reconhecimento pela qualidade e sabor autêntico, consolidando a marca no estado do Rio de Janeiro.",
                 },
                 {
                   year: "2024",
-                  title: "Atualidade",
-                  description: "Mais de duas décadas de tradição, qualidade e sabor incomparável",
+                  title: "Tradição e Logística",
+                  description: "Com 25 anos de história, a empresa atende grandes mercados em RJ, MG, SP e BA, mantendo a excelência artesanal e a eficiência logística.",
                 },
               ].map((milestone, index) => (
                 <div key={index} className="flex gap-6">
@@ -169,7 +188,7 @@ export default function OurHistoryPage() {
                     <div className="flex items-center justify-center size-12 rounded-full bg-primary text-primary-foreground font-bold text-sm">
                       {milestone.year}
                     </div>
-                    {index < 5 && <div className="w-0.5 h-full bg-border mt-2" />}
+                    {index < 3 && <div className="w-0.5 h-full bg-border mt-2" />}
                   </div>
                   <div className="pb-8">
                     <h3 className="font-serif text-xl font-bold text-foreground mb-2">{milestone.title}</h3>
@@ -181,22 +200,51 @@ export default function OurHistoryPage() {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-16 lg:py-24 bg-secondary">
+        {/* New Location Section */}
+        <section className="py-16 lg:py-24">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto text-center space-y-6">
-              <h2 className="font-serif text-3xl lg:text-5xl font-bold text-foreground text-balance">
+            <div className="max-w-4xl mx-auto text-center space-y-6">
+              <div className="inline-flex items-center justify-center size-16 rounded-full bg-primary/10 mb-4">
+                <MapPin className="size-8 text-primary" />
+              </div>
+              <h2 className="font-serif text-3xl lg:text-4xl font-bold text-foreground">
+                Nossa Localização – Qualidade e Logística Eficiente
+              </h2>
+              <div className="text-lg text-muted-foreground space-y-4">
+                <p>
+                  A Doces São Fidelis está localizada na Rua Alsalga Tito de Azevedo, bairro Nova Divinéia, em São Fidélis/RJ.
+                </p>
+                <p>
+                  Nossa localização estratégica no norte do estado do Rio de Janeiro nos permite o acesso a bananas frescas e de altíssima qualidade, provenientes da região serrana do Espírito Santo, uma das maiores referências no cultivo de banana no Brasil.
+                </p>
+                <p>
+                  Com uma infraestrutura moderna e um rigoroso controle de qualidade, atendemos grandes mercados nos estados do Rio de Janeiro, Minas Gerais, São Paulo e Bahia, sempre priorizando agilidade, frescor e excelência em cada entrega.
+                </p>
+              </div>
+              <div className="pt-6">
+                <Button asChild size="lg" variant="outline">
+                  <Link href="/contato">Entre em Contato para Visitas</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-16 lg:py-24 bg-primary">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-3xl mx-auto text-center space-y-6 text-primary-foreground">
+              <h2 className="font-serif text-3xl lg:text-5xl font-bold text-balance">
                 Faça Parte da Nossa História
               </h2>
-              <p className="text-lg text-muted-foreground text-pretty">
+              <p className="text-lg text-primary-foreground/90 text-pretty">
                 Conheça nossos produtos e descubra por que somos referência em doces artesanais há mais de 20 anos.
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
-                <Button asChild size="lg">
+                <Button asChild size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90">
                   <Link href="/produtos"><span>Ver Produtos</span></Link>
                 </Button>
-                {/* O botão "Fale Conosco" já existe e não é um "Solicitar Orçamento", então o mantemos. */}
-                <Button asChild variant="outline" size="lg">
+                <Button asChild variant="outline" size="lg" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
                   <Link href="/contato"><span>Fale Conosco</span></Link>
                 </Button>
               </div>
