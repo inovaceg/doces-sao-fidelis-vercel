@@ -4,6 +4,7 @@ import { Button } from "@/components/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Calendar, Heart, Users, Trophy, MapPin } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image" // Importar Image
 
 export default function OurHistoryPage() {
   return (
@@ -91,8 +92,22 @@ export default function OurHistoryPage() {
           </div>
         </section>
 
-        {/* Values Section (Mantido) */}
+        {/* Factory Image Section */}
         <section className="py-16 lg:py-24">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden shadow-xl">
+              <Image
+                src="/vista-aerea-fabrica.jpg"
+                alt="Vista aérea da fábrica Doces São Fidélis"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Values Section (Mantido) */}
+        <section className="py-16 lg:py-24 bg-secondary">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center space-y-4 mb-16">
               <h2 className="font-serif text-3xl lg:text-5xl font-bold text-foreground">Nossos Valores</h2>
