@@ -1,31 +1,40 @@
 "use client"
 import { Button } from "@/components/button"
 import Link from "next/link"
-import { Phone, Mail, Menu, X, ShoppingCart } from "lucide-react" // Adicionado ShoppingCart
+import { Phone, Mail, Menu, X, ShoppingCart, Instagram } from "lucide-react" // Adicionado Instagram
 import { useState } from "react"
-import { useCart } from "@/components/cart-provider" // Importar useCart
+import { useCart } from "@/components/cart-provider"
+import { formatPhoneNumber } from "@/lib/utils" // Importar a função de formatação
 
 export function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { getTotalItems } = useCart() // Usar o hook do carrinho para obter o total de itens
+  const { getTotalItems } = useCart()
 
   return (
     <header className="sticky top-0 z-50">
       <div className="bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-10 items-center justify-between text-sm">
+            {/* Telefone no canto esquerdo */}
             <a href="tel:+553498484644" className="flex items-center gap-2 hover:underline">
               <Phone className="size-4" />
-              <span>(34) 98484-4644</span>
+              <span>{formatPhoneNumber("34984844644")}</span> {/* Número formatado */}
             </a>
-            <a
-              href="mailto:contato@docessaofidelis.com.br"
-              className="hidden sm:flex items-center gap-2 hover:underline"
-            >
-              <Mail className="size-4" />
-              <span>contato@docessaofidelis.com.br</span>
-            </a>
-            <div className="hidden sm:block font-medium">Tradição desde 2000</div>
+
+            {/* Ícone do Instagram e "Tradição desde 2000" no canto direito */}
+            <div className="flex items-center gap-4">
+              <a
+                href="https://instagram.com/docessaofidelis"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:underline"
+                aria-label="Instagram"
+              >
+                <Instagram className="size-4" />
+                <span className="sr-only">Instagram</span> {/* Texto para leitores de tela */}
+              </a>
+              <div className="hidden sm:block font-medium">Tradição desde 2000</div>
+            </div>
           </div>
         </div>
       </div>
@@ -34,7 +43,6 @@ export function SiteHeader() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
-              {/* Envolver img e span em um único div para resolver o erro React.Children.only */}
               <div className="flex items-center gap-3">
                 <img
                   src="/logo-doces-sao-fidelis.png"
@@ -79,10 +87,8 @@ export function SiteHeader() {
               <Button asChild size="sm" variant="outline" className="rounded-full bg-transparent">
                 <Link href="/admin/login">Login</Link>
               </Button>
-              {/* Ícone do Carrinho */}
               <Button asChild size="icon-sm" variant="ghost" className="relative">
                 <Link href="/carrinho">
-                  {/* Envolver o ícone e o span condicional em um único span */}
                   <span>
                     <ShoppingCart className="size-5" />
                     {getTotalItems() > 0 && (
@@ -96,10 +102,8 @@ export function SiteHeader() {
             </nav>
 
             <div className="flex items-center md:hidden gap-2">
-              {/* Ícone do Carrinho para Mobile */}
               <Button asChild size="icon-sm" variant="ghost" className="relative">
                 <Link href="/carrinho">
-                  {/* Envolver o ícone e o span condicional em um único span */}
                   <span>
                     <ShoppingCart className="size-5" />
                     {getTotalItems() > 0 && (
