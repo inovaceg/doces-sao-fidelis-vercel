@@ -8,19 +8,40 @@ export async function POST(request: Request) {
 
     const supabase = await createClient()
 
-    // Extrair e preparar os dados, garantindo que campos NOT NULL sejam strings
+    // Preparar os dados, garantindo que campos NOT NULL sejam sempre strings não vazias após trim
     // e campos NULLABLE sejam null se vazios
+    const companyName = (data.companyName && data.companyName.trim() !== '') ? data.companyName.trim() : null;
+    const contactName = data.contactName ? data.contactName.trim() : '';
+    const email = data.email ? data.email.trim() : '';
+    const phone = data.phone ? data.phone.trim() : '';
+    const address = (data.address && data.address.trim() !== '') ? data.address.trim() : null;
+    const city = (data.city && data.city.trim() !== '') ? data.city.trim() : null;
+    const state = (data.state && data.state.trim() !== '') ? data.state.trim() : null;
+    const message = (data.message && data.message.trim() !== '') ? data.message.trim() : null;
+
+    // Validação básica no servidor para campos NOT NULL (embora Zod já faça isso no cliente)
+    if (!contactName) {
+      return NextResponse.json({ error: "Nome do contato é obrigatório." }, { status: 400 });
+    }
+    if (!email) {
+      return NextResponse.json({ error: "E-mail é obrigatório." }, { status: 400 });
+    }
+    if (!phone) {
+      return NextResponse.json({ error: "Telefone é obrigatório." }, { status: 400 });
+    }
+    // A mensagem é nullable, então não precisa de validação de não-vazio aqui se for null
+
     const payload = {
-      company_name: (data.companyName && data.companyName.trim() !== '') ? data.companyName.trim() : null,
-      contact_name: data.contactName ? data.contactName.trim() : '', // NOT NULL: Garante string, mesmo que vazia
-      email: data.email ? data.email.trim() : '',                   // NOT NULL: Garante string, mesmo que vazia
-      phone: data.phone ? data.phone.trim() : '',                   // NOT NULL: Garante string, mesmo que vazia
-      address: (data.address && data.address.trim() !== '') ? data.address.trim() : null,
-      city: (data.city && data.city.trim() !== '') ? data.city.trim() : null,
-      state: (data.state && data.state.trim() !== '') ? data.state.trim() : null,
+      company_name: companyName,
+      contact_name: contactName,
+      email: email,
+      phone: phone,
+      address: address,
+      city: city,
+      state: state,
       product_interest: null, // Este campo é sempre null para o formulário de contato
       quantity: null,         // Este campo é sempre null para o formulário de contato
-      message: (data.message && data.message.trim() !== '') ? data.message.trim() : null, // Alterado para enviar null se vazio
+      message: message,
     };
 
     console.log("[API Contact] Payload being sent to Supabase:", payload); // Log do payload para depuração
@@ -29,6 +50,8 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error("[API Contact] Error saving contact message to Supabase:", error);
+      // Log do objeto de erro completo do Supabase para mais detalhes
+      console.error("[API Contact] Supabase error details:", JSON.stringify(error, null, 2));
       return NextResponse.json({ error: error.message || "Erro ao salvar mensagem de contato" }, { status: 500 })
     }
 
