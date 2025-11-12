@@ -32,11 +32,11 @@ export default async function HomePage() {
   const { data: featuredProducts, error: productsError } = await supabase
     .from("products")
     .select("*")
-    .eq("is_featured", true)
-    .eq("is_active", true)
-    .order("display_order", { ascending: true })
+    // Removido o filtro .eq("is_featured", true)
+    .eq("is_active", true) // Mantém o filtro para mostrar apenas produtos ativos
+    .order("display_order", { ascending: true }) // Ordena por display_order
     .order("created_at", { ascending: false })
-    .limit(8) // Adicionado limite de 8 produtos
+    .limit(8) // Limita a 8 produtos
 
   if (productsError) {
     console.error("Error fetching featured products:", productsError)
