@@ -17,7 +17,12 @@ export async function POST(request: Request) {
     const address = (data.address && data.address.trim() !== '') ? data.address.trim() : null;
     const city = (data.city && data.city.trim() !== '') ? data.city.trim() : null;
     const state = (data.state && data.state.trim() !== '') ? data.state.trim() : null;
-    const message = (data.message && data.message.trim() !== '') ? data.message.trim() : null;
+    
+    // Constrói a mensagem final, incluindo o bairro se fornecido
+    let finalMessage = (data.message && data.message.trim() !== '') ? data.message.trim() : null;
+    if (data.neighborhood && data.neighborhood.trim() !== '') {
+      finalMessage = finalMessage ? `${finalMessage}\nBairro: ${data.neighborhood.trim()}` : `Bairro: ${data.neighborhood.trim()}`;
+    }
 
     // Validação básica no servidor para campos NOT NULL (embora Zod já faça isso no cliente)
     if (!contactName) {
@@ -41,7 +46,7 @@ export async function POST(request: Request) {
       state: state,
       product_interest: null, // Este campo é sempre null para o formulário de contato
       quantity: null,         // Este campo é sempre null para o formulário de contato
-      message: message,
+      message: finalMessage,  // Usa a mensagem final construída
     };
 
     console.log("[API Contact] Payload being sent to Supabase:", payload); // Log do payload para depuração

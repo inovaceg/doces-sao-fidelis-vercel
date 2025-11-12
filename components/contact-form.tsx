@@ -132,32 +132,37 @@ export function ContactForm() {
     setIsSubmitting(true)
 
     try {
-      // Constrói o endereço completo para enviar ao banco de dados
-      const fullAddress = [data.address, data.neighborhood].filter(Boolean).join(', ');
+      // Constrói a mensagem completa, incluindo o bairro se presente, para o campo 'message' no banco de dados
+      const fullMessage = [
+        data.message,
+        data.neighborhood ? `Bairro: ${data.neighborhood}` : ''
+      ].filter(Boolean).join('\n');
 
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          company_name: data.companyName,
-          contact_name: data.contactName,
+          companyName: data.companyName,
+          contactName: data.contactName,
           email: data.email,
           phone: data.phone,
-          address: fullAddress, // Envia o endereço completo
+          address: data.address, // Envia o endereço (rua/avenida) separadamente
           city: data.city,
           state: data.state,
-          product_interest: null, // Removido do formulário, enviar null
-          quantity: null, // Removido do formulário, enviar null
-          message: data.message,
+          message: fullMessage, // Envia a mensagem completa, incluindo o bairro
         }),
       })
 
-      if (!response.ok) throw new Error("Erro ao enviar mensagem de contato")
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erro ao enviar mensagem de contato");
+      }
 
       toast.success("Mensagem enviada com sucesso! Entraremos em contato em breve.")
       reset()
-    } catch (error) {
-      toast.error("Erro ao enviar mensagem de contato. Tente novamente.")
+    } catch (error: any) {
+      console.error("Erro ao enviar mensagem de contato:", error);
+      toast.error(error.message || "Erro ao enviar mensagem de contato. Tente novamente.");
     } finally {
       setIsSubmitting(false)
     }
