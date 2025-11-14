@@ -166,6 +166,7 @@ export function BannerForm() {
         .from("settings")
         .upsert(updates, { onConflict: "key" });
 
+      // Adicionado log para o erro do Supabase upsert
       if (error) {
         console.error("Supabase upsert error:", error);
         throw error;
