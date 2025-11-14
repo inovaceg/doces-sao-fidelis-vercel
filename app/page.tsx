@@ -9,6 +9,7 @@ import { NewsletterForm } from "@/components/newsletter-form"
 import { createClient } from "@/lib/supabase/server"
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
+import { cookies } from "next/headers" // Importar cookies
 
 interface Product {
   id: string
@@ -26,9 +27,9 @@ interface Product {
   created_at: string
 }
 
-export const revalidate = 0; // Força a renderização dinâmica, desabilita o cache para esta página
-
 export default async function HomePage() {
+  cookies() // Esta chamada força a página a ser renderizada dinamicamente
+
   const supabase = await createClient()
 
   const { data: featuredProducts, error: productsError } = await supabase
@@ -52,18 +53,17 @@ export default async function HomePage() {
   const bannerTimestamps: Record<string, string> = {};
 
   bannerSettings?.forEach(setting => {
-    bannerUrls[setting.key] = setting.value ?? ""; // Usa ?? para tratar null/undefined
+    bannerUrls[setting.key] = setting.value ?? "";
     bannerTimestamps[setting.key] = setting.updated_at ? new Date(setting.updated_at).getTime().toString() : '';
   });
 
   const getCacheBustedUrl = (urlKey: string) => {
     const baseUrl = bannerUrls[urlKey];
     const timestamp = bannerTimestamps[urlKey];
-    // Só retorna um URL se baseUrl não for uma string vazia
     if (baseUrl && baseUrl.trim() !== "") {
       return timestamp ? `${baseUrl}?v=${timestamp}` : baseUrl;
     }
-    return ""; // Retorna string vazia se não houver URL
+    return "";
   };
 
   const desktopBannerUrl = getCacheBustedUrl("homepage_banner_url_desktop");
@@ -82,7 +82,7 @@ export default async function HomePage() {
         {/* Hero Section */}
         <section className="relative flex items-center justify-center text-center overflow-hidden h-[60vh] md:h-[70vh] lg:h-[80vh] bg-primary">
           <div className="absolute inset-0 z-0">
-            {desktopBannerUrl && ( // Renderização condicional
+            {desktopBannerUrl && (
               <>
                 <picture>
                   <source media="(max-width: 767px)" srcSet={mobileBannerUrl || tabletBannerUrl || desktopBannerUrl} />
