@@ -9,7 +9,6 @@ import { NewsletterForm } from "@/components/newsletter-form"
 import { createClient } from "@/lib/supabase/server"
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
-import { unstable_noStore as noStore } from 'next/cache'; // Importar noStore
 
 interface Product {
   id: string
@@ -30,39 +29,33 @@ interface Product {
 export const revalidate = 0; // Força a renderização dinâmica, desabilita o cache para esta página
 
 export default async function HomePage() {
-  noStore(); // Desabilita o cache de dados para este componente de servidor
-  console.log("HomePage rendered/revalidated at:", new Date().toISOString()); // Log para depuração
-
   const supabase = await createClient()
 
   const { data: featuredProducts, error: productsError } = await supabase
     .from("products")
     .select("*")
-    .eq("is_active", true) // Mantém o filtro para mostrar apenas produtos ativos
-    .order("display_order", { ascending: true }) // Ordena por display_order
+    .eq("is_active", true)
+    .order("display_order", { ascending: true })
     .order("created_at", { ascending: false })
-    .limit(8) // Limita a 8 produtos
+    .limit(8)
 
   if (productsError) {
     console.error("Error fetching featured products:", productsError)
   }
-  console.log("Featured Products fetched for homepage:", featuredProducts);
 
-  // Modificado para buscar 'value' e 'updated_at'
   const { data: bannerSettings, error: bannerError } = await supabase
     .from("settings")
     .select("key, value, updated_at")
     .in("key", ["homepage_banner_url_desktop", "homepage_banner_url_tablet", "homepage_banner_url_mobile"]);
 
   const bannerUrls: Record<string, string> = {};
-  const bannerTimestamps: Record<string, string> = {}; // Para armazenar os timestamps
+  const bannerTimestamps: Record<string, string> = {};
 
   bannerSettings?.forEach(setting => {
     bannerUrls[setting.key] = setting.value || "";
-    bannerTimestamps[setting.key] = setting.updated_at ? new Date(setting.updated_at).getTime().toString() : ''; // Converte para timestamp
+    bannerTimestamps[setting.key] = setting.updated_at ? new Date(setting.updated_at).getTime().toString() : '';
   });
 
-  // Adiciona o parâmetro de cache-busting aos URLs
   const getCacheBustedUrl = (urlKey: string, defaultUrl: string) => {
     const baseUrl = bannerUrls[urlKey] || defaultUrl;
     const timestamp = bannerTimestamps[urlKey];
@@ -70,8 +63,6 @@ export default async function HomePage() {
   };
 
   const desktopBannerUrl = getCacheBustedUrl("homepage_banner_url_desktop", "/banner.png");
-  const tabletBannerUrl = getCacheBustedUrl("homepage_banner_url_tablet", desktopBannerUrl);
-  const mobileBannerUrl = getCacheBustedUrl("homepage_banner_url_mobile", tabletBannerUrl); // Corrigido o nome da chave
 
   if (bannerError && bannerError.code !== 'PGRST116') {
     console.error("Error fetching homepage banner URLs:", bannerError)
@@ -85,17 +76,11 @@ export default async function HomePage() {
         {/* Hero Section */}
         <section className="relative flex items-center justify-center text-center overflow-hidden h-[60vh] md:h-[70vh] lg:h-[80vh]">
           <div className="absolute inset-0 z-0">
-            <picture>
-              <source media="(max-width: 767px)" srcSet={mobileBannerUrl} />
-              <source media="(min-width: 768px) and (max-width: 1023px)" srcSet={tabletBannerUrl} />
-              <source media="(min-width: 1024px)" srcSet={desktopBannerUrl} />
-              <img
-                src={desktopBannerUrl}
-                alt="Doces São Fidélis"
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            </picture>
-            {/* Aumentando o ofuscamento para melhorar o contraste do texto */}
+            <img
+              src={desktopBannerUrl}
+              alt="Doces São Fidélis"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
             <div className="absolute inset-0 bg-black/60" /> 
           </div>
 
