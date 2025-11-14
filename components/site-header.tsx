@@ -1,14 +1,19 @@
 "use client"
 import { Button } from "@/components/button"
 import Link from "next/link"
-import { Phone, Mail, Menu, X, ShoppingCart, Instagram } from "lucide-react" // Adicionado Instagram
-import { useState } from "react"
+import { Phone, Mail, Menu, X, ShoppingCart, Instagram } from "lucide-react"
+import { useState, useEffect } from "react" // Importar useEffect
 import { useCart } from "@/components/cart-provider"
-import { formatPhoneNumber } from "@/lib/utils" // Importar a função de formatação
+import { formatPhoneNumber } from "@/lib/utils"
 
 export function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false) // Novo estado para hidratação
   const { getTotalItems } = useCart()
+
+  useEffect(() => {
+    setIsMounted(true) // Define como true apenas no cliente após a montagem
+  }, [])
 
   return (
     <header className="sticky top-0 z-50">
@@ -18,7 +23,7 @@ export function SiteHeader() {
             {/* Telefone no canto esquerdo */}
             <a href="tel:+553498484644" className="flex items-center gap-2 hover:underline">
               <Phone className="size-4" />
-              <span>{formatPhoneNumber("34984844644")}</span> {/* Número formatado */}
+              <span>{formatPhoneNumber("34984844644")}</span>
             </a>
 
             {/* Ícone do Instagram e "Tradição desde 2000" no canto direito */}
@@ -31,7 +36,7 @@ export function SiteHeader() {
                 aria-label="Instagram"
               >
                 <Instagram className="size-4" />
-                <span className="sr-only">Instagram</span> {/* Texto para leitores de tela */}
+                <span className="sr-only">Instagram</span>
               </a>
               <div className="hidden sm:block font-medium">Tradição desde 2000</div>
             </div>
@@ -91,7 +96,7 @@ export function SiteHeader() {
                 <Link href="/carrinho">
                   <span>
                     <ShoppingCart className="size-5" />
-                    {getTotalItems() > 0 && (
+                    {isMounted && getTotalItems() > 0 && ( // Renderiza condicionalmente
                       <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full size-4 flex items-center justify-center text-xs font-bold">
                         {getTotalItems()}
                       </span>
@@ -106,7 +111,7 @@ export function SiteHeader() {
                 <Link href="/carrinho">
                   <span>
                     <ShoppingCart className="size-5" />
-                    {getTotalItems() > 0 && (
+                    {isMounted && getTotalItems() > 0 && ( // Renderiza condicionalmente
                       <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full size-4 flex items-center justify-center text-xs font-bold">
                         {getTotalItems()}
                       </span>
