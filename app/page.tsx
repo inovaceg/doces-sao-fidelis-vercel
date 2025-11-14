@@ -7,7 +7,6 @@ import Link from "next/link"
 import { ContactForm } from "@/components/contact-form"
 import { NewsletterForm } from "@/components/newsletter-form"
 import { createClient } from "@/lib/supabase/server"
-// import Image from "next/image" // Removido: Não usaremos o componente Image do Next.js aqui
 import { cookies, headers } from "next/headers"
 import { unstable_noStore } from 'next/cache';
 import { Badge } from "@/components/ui/badge"
@@ -63,6 +62,7 @@ export default async function HomePage() {
 
   bannerSettings?.forEach(setting => {
     bannerUrls[setting.key] = setting.value ?? "";
+    // Usar o timestamp de atualização para cache-busting
     bannerTimestamps[setting.key] = setting.updated_at ? new Date(setting.updated_at).getTime().toString() : '';
   });
 
@@ -74,6 +74,7 @@ export default async function HomePage() {
     const timestamp = bannerTimestamps[urlKey];
     
     if (baseUrl && baseUrl.trim() !== "") {
+      // Se houver um timestamp de atualização, use-o. Caso contrário, use o timestamp atual para garantir que o cache seja ignorado.
       const effectiveTimestamp = timestamp || Date.now().toString();
       return `${baseUrl}?v=${effectiveTimestamp}`;
     }
