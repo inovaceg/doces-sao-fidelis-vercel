@@ -8,8 +8,9 @@ import { ContactForm } from "@/components/contact-form"
 import { NewsletterForm } from "@/components/newsletter-form"
 import { createClient } from "@/lib/supabase/server"
 import Image from "next/image" // Importar Image do Next.js
-import { Badge } from "@/components/ui/badge"
 import { cookies } from "next/headers" // Importar cookies
+import { unstable_noStore } from 'next/cache'; // Importar unstable_noStore
+import { Badge } from "@/components/ui/badge" // Importar Badge
 
 interface Product {
   id: string
@@ -30,7 +31,8 @@ interface Product {
 export const revalidate = 0; // Força a renderização dinâmica, desabilita o cache para esta página
 
 export default async function HomePage() {
-  cookies() // Esta chamada força a página a ser renderizada dinamicamente
+  unstable_noStore(); // Força a renderização dinâmica para este componente de servidor
+  cookies() // Esta chamada também força a página a ser renderizada dinamicamente
 
   console.log("HomePage rendered at:", new Date().toISOString());
 
@@ -48,26 +50,10 @@ export default async function HomePage() {
     console.error("Error fetching featured products:", productsError)
   }
 
-  // Adicionado { revalidate: 0 } para garantir que esta requisição não seja cacheada pelo Next.js
   const { data: bannerSettings, error: bannerError } = await supabase
     .from("settings")
     .select("key, value, updated_at")
-    .in("key", ["homepage_banner_url_desktop", "homepage_banner_url_tablet", "homepage_banner_url_mobile"])
-    .limit(3, { head: false, count: 'exact' }) // Adicionado para garantir que a query não seja otimizada para cache
-    .then(response => {
-      // Força a requisição a ser tratada como não-cacheável pelo Next.js
-      // Isso é um hack para garantir que o Next.js não cacheie o resultado desta query
-      // em ambientes onde `revalidate = 0` pode não ser suficiente para fetches internos.
-      // Em produção, `revalidate = 0` no nível da página já deveria ser suficiente.
-      if (process.env.NODE_ENV === 'development') {
-        // No dev, podemos adicionar um timestamp para garantir que a URL da API seja única
-        // Isso é mais para garantir que o Next.js não reutilize o resultado da query
-        // em um ambiente de desenvolvimento com cache agressivo.
-        // Em produção, o `revalidate = 0` da página já faria o trabalho.
-        return { data: response.data, error: response.error };
-      }
-      return { data: response.data, error: response.error };
-    });
+    .in("key", ["homepage_banner_url_desktop", "homepage_banner_url_tablet", "homepage_banner_url_mobile"]);
 
   console.log("Raw banner settings from Supabase:", JSON.stringify(bannerSettings, null, 2));
 
@@ -128,6 +114,7 @@ export default async function HomePage() {
                     className="object-cover"
                     priority // Carregar com alta prioridade
                     sizes="(max-width: 767px) 100vw, (max-width: 1023px) 100vw, 100vw" // Definir sizes para responsividade
+                    unoptimized={true} // Desativar otimização para evitar cache
                   />
                 </picture>
                 <div className="absolute inset-0 bg-black/60" />
