@@ -9,6 +9,7 @@ import { NewsletterForm } from "@/components/newsletter-form"
 import { createClient } from "@/lib/supabase/server"
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
+import { unstable_noStore as noStore } from 'next/cache'; // Importar noStore
 
 interface Product {
   id: string
@@ -27,6 +28,9 @@ interface Product {
 }
 
 export default async function HomePage() {
+  noStore(); // Desabilita o cache de dados para este componente de servidor
+  console.log("HomePage rendered/revalidated at:", new Date().toISOString()); // Log para depuração
+
   const supabase = await createClient()
 
   const { data: featuredProducts, error: productsError } = await supabase
@@ -65,7 +69,7 @@ export default async function HomePage() {
 
   const desktopBannerUrl = getCacheBustedUrl("homepage_banner_url_desktop", "/banner.png");
   const tabletBannerUrl = getCacheBustedUrl("homepage_banner_url_tablet", desktopBannerUrl);
-  const mobileBannerUrl = getCacheBustedUrl("homepage_banner_url_url_mobile", tabletBannerUrl); // Corrigido o nome da chave
+  const mobileBannerUrl = getCacheBustedUrl("homepage_banner_url_mobile", tabletBannerUrl); // Corrigido o nome da chave
 
   if (bannerError && bannerError.code !== 'PGRST116') {
     console.error("Error fetching homepage banner URLs:", bannerError)
@@ -80,9 +84,9 @@ export default async function HomePage() {
         <section className="relative flex items-center justify-center text-center overflow-hidden h-[60vh] md:h-[70vh] lg:h-[80vh]">
           <div className="absolute inset-0 z-0">
             <picture>
-              <source media="(max-width: 767px)" src={mobileBannerUrl} />
-              <source media="(min-width: 768px) and (max-width: 1023px)" src={tabletBannerUrl} />
-              <source media="(min-width: 1024px)" src={desktopBannerUrl} />
+              <source media="(max-width: 767px)" srcSet={mobileBannerUrl} />
+              <source media="(min-width: 768px) and (max-width: 1023px)" srcSet={tabletBannerUrl} />
+              <source media="(min-width: 1024px)" srcSet={desktopBannerUrl} />
               <img
                 src={desktopBannerUrl}
                 alt="Doces São Fidélis"
