@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "sonner"
 import "./globals.css"
 import { CartProvider } from "@/components/cart-provider"
+import Script from "next/script" // Importar o componente Script do Next.js
 
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" })
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
@@ -57,6 +58,25 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
+      <head> {/* Adicionado a tag <head> explicitamente */}
+        {/* Google Analytics */}
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-Q9VP831Q68"
+          strategy="afterInteractive" // Carrega o script após a hidratação, sem bloquear o FCP
+        />
+        <Script
+          id="google-analytics-config" // ID único para o segundo script
+          strategy="afterInteractive"
+        >
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-Q9VP831Q68');
+          `}
+        </Script>
+      </head>
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
         <CartProvider>
           <React.Fragment>
