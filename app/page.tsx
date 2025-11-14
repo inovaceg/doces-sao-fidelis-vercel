@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/server"
 import { cookies, headers } from "next/headers"
 import { unstable_noStore } from 'next/cache';
 import { Badge } from "@/components/ui/badge"
+import { MapEmbed } from "@/components/MapEmbed"; // Importação do MapEmbed
 
 interface Product {
   id: string
@@ -445,6 +446,30 @@ export default async function HomePage() {
             </Card>
           </div>
         </section>
+
+        {/* --------------------------------------------------------------
+          NOVA SEÇÃO – MAPA DE LOCALIZAÇÃO (com indicador temporário)
+        -------------------------------------------------------------- */}
+        <section className="py-20 lg:py-32 bg-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h3 className="text-center text-2xl font-semibold text-foreground mb-8">
+              Como nos encontrar
+            </h3>
+            {/* INDICADOR VISUAL TEMPORÁRIO */}
+            <div className="bg-red-200 border-4 border-red-500 p-4 mb-8 text-center text-red-800 font-bold">
+              --- INÍCIO DA SEÇÃO DO MAPA (DEBUG) ---
+            </div>
+
+            {/* O componente MapEmbed recebe a latitude e longitude fornecidas */}
+            <MapEmbed lat={-21.637652323862493} lng={-41.732340334072234} zoom={15} />
+
+            {/* INDICADOR VISUAL TEMPORÁRIO */}
+            <div className="bg-red-200 border-4 border-red-500 p-4 mt-8 text-center text-red-800 font-bold">
+              --- FIM DA SEÇÃO DO MAPA (DEBUG) ---
+            </div>
+          </div>
+        </section>
+
       </main>
 
       <SiteFooter />
