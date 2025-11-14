@@ -56,13 +56,15 @@ export default async function HomePage() {
     bannerTimestamps[setting.key] = setting.updated_at ? new Date(setting.updated_at).getTime().toString() : '';
   });
 
-  const getCacheBustedUrl = (urlKey: string, defaultUrl: string) => {
-    const baseUrl = bannerUrls[urlKey] || defaultUrl;
+  const getCacheBustedUrl = (urlKey: string) => {
+    const baseUrl = bannerUrls[urlKey] ?? ""; // Corrigido: Usa ?? para tratar string vazia corretamente
     const timestamp = bannerTimestamps[urlKey];
-    return timestamp ? `${baseUrl}?v=${timestamp}` : baseUrl;
+    return baseUrl && timestamp ? `${baseUrl}?v=${timestamp}` : baseUrl;
   };
 
-  const desktopBannerUrl = getCacheBustedUrl("homepage_banner_url_desktop", "/banner.png");
+  const desktopBannerUrl = getCacheBustedUrl("homepage_banner_url_desktop");
+  const tabletBannerUrl = getCacheBustedUrl("homepage_banner_url_tablet");
+  const mobileBannerUrl = getCacheBustedUrl("homepage_banner_url_mobile");
 
   if (bannerError && bannerError.code !== 'PGRST116') {
     console.error("Error fetching homepage banner URLs:", bannerError)
@@ -74,14 +76,23 @@ export default async function HomePage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative flex items-center justify-center text-center overflow-hidden h-[60vh] md:h-[70vh] lg:h-[80vh]">
+        <section className="relative flex items-center justify-center text-center overflow-hidden h-[60vh] md:h-[70vh] lg:h-[80vh] bg-primary">
           <div className="absolute inset-0 z-0">
-            <img
-              src={desktopBannerUrl}
-              alt="Doces São Fidélis"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/60" /> 
+            {desktopBannerUrl && ( // Renderização condicional
+              <>
+                <picture>
+                  <source media="(max-width: 767px)" srcSet={mobileBannerUrl || tabletBannerUrl || desktopBannerUrl} />
+                  <source media="(min-width: 768px) and (max-width: 1023px)" srcSet={tabletBannerUrl || desktopBannerUrl} />
+                  <source media="(min-width: 1024px)" srcSet={desktopBannerUrl} />
+                  <img
+                    src={desktopBannerUrl}
+                    alt="Doces São Fidélis"
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                </picture>
+                <div className="absolute inset-0 bg-black/60" />
+              </>
+            )}
           </div>
 
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-8 sm:py-16 md:py-24 lg:py-32 animate-in fade-in duration-1000">
