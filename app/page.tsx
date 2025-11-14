@@ -27,6 +27,8 @@ interface Product {
   created_at: string
 }
 
+export const revalidate = 0; // Força a renderização dinâmica, desabilita o cache para esta página
+
 export default async function HomePage() {
   noStore(); // Desabilita o cache de dados para este componente de servidor
   console.log("HomePage rendered/revalidated at:", new Date().toISOString()); // Log para depuração
