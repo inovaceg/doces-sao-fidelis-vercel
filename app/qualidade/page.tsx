@@ -62,8 +62,8 @@ export default function QualityPage() {
               </div>
               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
                 <img
-                  src="/traditional-banana-candy-bananada.jpg"
-                  alt="Controle de qualidade na produção de bananadas"
+                  src="/producao-bananada-1.jpg"
+                  alt="Controle de qualidade na produção de bananadas Doces São Fidélis"
                   className="object-cover w-full h-full"
                 />
               </div>
