@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-# Disallow admin pages
-Disallow: /admin/
+Sitemap: /sitemap.xml
