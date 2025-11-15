@@ -58,7 +58,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <head> {/* Adicionado a tag <head> explicitamente */}
+      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
         {/* Google Analytics */}
         <Script
           async
@@ -76,8 +76,6 @@ export default function RootLayout({
             gtag('config', 'G-Q9VP831Q68');
           `}
         </Script>
-      </head>
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
         <CartProvider>
           <React.Fragment>
             {children}
