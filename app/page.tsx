@@ -12,7 +12,7 @@ import { unstable_noStore } from 'next/cache';
 import { Badge } from "@/components/ui/badge"
 import { MapEmbed } from "@/components/MapEmbed"; // Importação do MapEmbed
 import type { Metadata } from "next" // Importar Metadata
-import Image from "next/image" // Importar Image para usar o componente otimizado
+// import Image from "next/image" // Removido o import do componente Image do Next.js
 
 interface Product {
   id: string
@@ -199,11 +199,10 @@ export default async function HomePage() {
 
             {/* Nova imagem adicionada aqui */}
             <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden shadow-xl mb-12">
-              <Image
+              <img
                 src="/producao-geral.jpg"
                 alt="Equipe Doces São Fidélis trabalhando na produção de doces artesanais"
-                fill
-                className="object-cover"
+                className="absolute inset-0 w-full h-full object-cover"
               />
             </div>
 
